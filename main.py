@@ -6,6 +6,8 @@ from PySide6.QtWidgets import *
 from form import Ui_MainWindow
 from PySide6.QtUiTools import QUiLoader
 import pandas as pd
+from pandas.api.types import is_numeric_dtype
+from pandas.api.types import is_string_dtype
 
 class MainWindow(QMainWindow):
 
@@ -23,29 +25,40 @@ class MainWindow(QMainWindow):
             df = pd.read_csv(fileName)
             file_path = os.path.splitext(fileName)[0]
             file_name = file_path.split('/')[-1]
-            self.ui.open.setText(file_name)
             self.ui.relation.setText(file_name)
             self.ui.attributes.setText(str(df.shape[1]))
             self.ui.instances.setText(str(len(df)))
-            self.ui.tableWidget.setRowCount(df.shape[1])
 
-            self.ui.check_list = []
-            for i in range(df.shape[1]):
-                self.ui.checkBox = QCheckBox(self.ui.groupBox_3)
-                self.ui.check_list.append(self.ui.checkBox)
-                self.ui.check_list[i].setText(df.columns[i])
-                self.ui.check_list[i].setChecked(True)
-                self.ui.tableWidget.setCellWidget(i, 0, self.ui.check_list[i])
-                #self.ui.tableWidget.setItem(i,0,QTableWidgetItem())
-
-            for i in range(df.shape[1]):
-                self.ui.check_list[i].stateChanged.connect(self.check)
+            self.ui.list.addItems(df.columns)
+            self.ui.value.clear()
+            self.ui.list.itemClicked.connect(self.list_click)
 
 
-    def check(self, state):
-        for i in range(df.shape[1]):
-            if self.ui.check_list[i].isChecked() == False:
-                print(df.columns[i])
+    def list_click(self):
+        data = df.loc[:9,[self.ui.list.currentItem().text()]]
+        self.ui.value.clear()
+        for i in range(10):
+            self.ui.value.insertItem(i,QListWidgetItem(str(data.values[i]).strip("[,]")))
+
+        desc =['count','mean','std','min','25%','50%','75%','max']
+        desc_str = ['count', 'unique', 'top', 'freq']
+        self.ui.des.clear()
+        self.ui.des.setRowCount(len(desc))
+        self.ui.des.setColumnCount(1)
+        self.ui.des.setVerticalHeaderLabels(desc)
+
+        if is_numeric_dtype(data.squeeze()) :
+            for i in range(len(desc)):
+                self.ui.des.setItem(i,0,QTableWidgetItem(str(float(str(data.describe().values[i]).strip("[,]")))))
+
+        else :
+            self.ui.des.setRowCount(len(desc_str))
+            self.ui.des.setVerticalHeaderLabels(desc_str)
+            self.ui.des.setColumnCount(1)
+            for i in range(len(desc_str)):
+                self.ui.des.setItem(i,0,QTableWidgetItem(str(data.describe().values[i]).strip("[,]")))
+
+
 if __name__ == '__main__':
     app = QApplication(sys.argv)
 
