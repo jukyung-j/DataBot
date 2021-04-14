@@ -32,6 +32,7 @@ class MainWindow(QMainWindow):
             self.ui.list.addItems(df.columns)
             self.ui.value.clear()
             self.ui.list.itemClicked.connect(self.list_click)
+            self.apply_algo()
 
 
     def list_click(self):
@@ -49,7 +50,7 @@ class MainWindow(QMainWindow):
 
         if is_numeric_dtype(data.squeeze()) :
             for i in range(len(desc)):
-                self.ui.des.setItem(i,0,QTableWidgetItem(str(float(str(data.describe().values[i]).strip("[,]")))))
+                self.ui.des.setItem(i,0,QTableWidgetItem(str(float(data.describe().values[i]))))
 
         else :
             self.ui.des.setRowCount(len(desc_str))
@@ -58,6 +59,11 @@ class MainWindow(QMainWindow):
             for i in range(len(desc_str)):
                 self.ui.des.setItem(i,0,QTableWidgetItem(str(data.describe().values[i]).strip("[,]")))
 
+    def apply_algo(self):
+        if self.ui.knn.isChecked() == True:
+            print("knn")
+        if self.ui.lr.isChecked() == True:
+            print("lr")
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)

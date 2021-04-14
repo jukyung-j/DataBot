@@ -102,10 +102,46 @@ class Ui_MainWindow(object):
         self.label_2.setGeometry(QRect(260, 20, 64, 15))
         self.openbtn = QPushButton(self.Preprocess)
         self.openbtn.setObjectName(u"openbtn")
-        self.openbtn.setGeometry(QRect(10, 10, 75, 51))
+        self.openbtn.setGeometry(QRect(10, 20, 75, 41))
         self.tabWidget.addTab(self.Preprocess, "")
         self.Classify = QWidget()
         self.Classify.setObjectName(u"Classify")
+        self.groupBox = QGroupBox(self.Classify)
+        self.groupBox.setObjectName(u"groupBox")
+        self.groupBox.setGeometry(QRect(20, 40, 280, 401))
+        self.verticalLayout = QVBoxLayout(self.groupBox)
+        self.verticalLayout.setObjectName(u"verticalLayout")
+        self.knn = QCheckBox(self.groupBox)
+        self.knn.setObjectName(u"knn")
+
+        self.verticalLayout.addWidget(self.knn)
+
+        self.lr = QCheckBox(self.groupBox)
+        self.lr.setObjectName(u"lr")
+
+        self.verticalLayout.addWidget(self.lr)
+
+        self.apply = QPushButton(self.groupBox)
+        self.apply.setObjectName(u"apply")
+
+        self.verticalLayout.addWidget(self.apply)
+
+        self.groupBox_5 = QGroupBox(self.Classify)
+        self.groupBox_5.setObjectName(u"groupBox_5")
+        self.groupBox_5.setGeometry(QRect(390, 30, 561, 411))
+        self.tableWidget = QTableWidget(self.groupBox_5)
+        if (self.tableWidget.columnCount() < 4):
+            self.tableWidget.setColumnCount(4)
+        __qtablewidgetitem = QTableWidgetItem()
+        self.tableWidget.setHorizontalHeaderItem(0, __qtablewidgetitem)
+        __qtablewidgetitem1 = QTableWidgetItem()
+        self.tableWidget.setHorizontalHeaderItem(1, __qtablewidgetitem1)
+        __qtablewidgetitem2 = QTableWidgetItem()
+        self.tableWidget.setHorizontalHeaderItem(2, __qtablewidgetitem2)
+        __qtablewidgetitem3 = QTableWidgetItem()
+        self.tableWidget.setHorizontalHeaderItem(3, __qtablewidgetitem3)
+        self.tableWidget.setObjectName(u"tableWidget")
+        self.tableWidget.setGeometry(QRect(20, 50, 521, 281))
         self.tabWidget.addTab(self.Classify, "")
 
         self.horizontalLayout_2.addWidget(self.tabWidget)
@@ -121,8 +157,9 @@ class Ui_MainWindow(object):
 
         self.retranslateUi(MainWindow)
         self.openbtn.clicked.connect(MainWindow.openfile)
+        self.apply.clicked.connect(MainWindow.apply_algo)
 
-        self.tabWidget.setCurrentIndex(0)
+        self.tabWidget.setCurrentIndex(1)
 
 
         QMetaObject.connectSlotsByName(MainWindow)
@@ -145,6 +182,19 @@ class Ui_MainWindow(object):
         self.label_2.setText(QCoreApplication.translate("MainWindow", u"Statics", None))
         self.openbtn.setText(QCoreApplication.translate("MainWindow", u"Open File", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.Preprocess), QCoreApplication.translate("MainWindow", u"Preprocess", None))
+        self.groupBox.setTitle(QCoreApplication.translate("MainWindow", u"Algorithm", None))
+        self.knn.setText(QCoreApplication.translate("MainWindow", u"K-Nearest Neighbor", None))
+        self.lr.setText(QCoreApplication.translate("MainWindow", u"Logistic Regression", None))
+        self.apply.setText(QCoreApplication.translate("MainWindow", u"Apply", None))
+        self.groupBox_5.setTitle(QCoreApplication.translate("MainWindow", u"Result", None))
+        ___qtablewidgetitem = self.tableWidget.horizontalHeaderItem(0)
+        ___qtablewidgetitem.setText(QCoreApplication.translate("MainWindow", u"algorithm", None));
+        ___qtablewidgetitem1 = self.tableWidget.horizontalHeaderItem(1)
+        ___qtablewidgetitem1.setText(QCoreApplication.translate("MainWindow", u"accuracy", None));
+        ___qtablewidgetitem2 = self.tableWidget.horizontalHeaderItem(2)
+        ___qtablewidgetitem2.setText(QCoreApplication.translate("MainWindow", u"precision", None));
+        ___qtablewidgetitem3 = self.tableWidget.horizontalHeaderItem(3)
+        ___qtablewidgetitem3.setText(QCoreApplication.translate("MainWindow", u"recall", None));
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.Classify), QCoreApplication.translate("MainWindow", u"Classify", None))
     # retranslateUi
 
