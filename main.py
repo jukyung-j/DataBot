@@ -8,6 +8,8 @@ from PySide6.QtUiTools import QUiLoader
 import pandas as pd
 from pandas.api.types import is_numeric_dtype
 from pandas.api.types import is_string_dtype
+from sklearn.model_selection import train_test_split
+from sklearn.neighbors import KNeighborsClassifier
 
 class MainWindow(QMainWindow):
 
@@ -23,6 +25,10 @@ class MainWindow(QMainWindow):
         if fileName:
             global df
             df = pd.read_csv(fileName)
+            global X
+            global y
+            X = df.iloc[:,:-1]
+            y = df.iloc[:,[-1]]
             file_path = os.path.splitext(fileName)[0]
             file_name = file_path.split('/')[-1]
             self.ui.relation.setText(file_name)
@@ -32,7 +38,6 @@ class MainWindow(QMainWindow):
             self.ui.list.addItems(df.columns)
             self.ui.value.clear()
             self.ui.list.itemClicked.connect(self.list_click)
-            self.apply_algo()
 
 
     def list_click(self):
@@ -61,9 +66,19 @@ class MainWindow(QMainWindow):
 
     def apply_algo(self):
         if self.ui.knn.isChecked() == True:
-            print("knn")
+            self.knn()
         if self.ui.lr.isChecked() == True:
-            print("lr")
+            self.linear()
+
+    def knn(self):
+        X_train, X_test, y_train, y_test = train_test_split(
+            X, y, random_state=42)
+        kn = KNeighborsClassifier()
+        kn.fit(X_train, y_train)
+        # print(kn.score(X_test,y_test))
+
+    def linear(self):
+        print("lr")
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
