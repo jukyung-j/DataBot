@@ -10,6 +10,7 @@ from pandas.api.types import is_numeric_dtype
 from pandas.api.types import is_string_dtype
 from sklearn.model_selection import train_test_split
 from sklearn.neighbors import KNeighborsClassifier
+from sklearn.metrics import accuracy_score, recall_score, precision_score
 
 class MainWindow(QMainWindow):
 
@@ -65,6 +66,8 @@ class MainWindow(QMainWindow):
                 self.ui.des.setItem(i,0,QTableWidgetItem(str(data.describe().values[i]).strip("[,]")))
 
     def apply_algo(self):
+        self.ui.result.setRowCount(2)
+        self.ui.result.verticalHeader().setVisible(False)
         if self.ui.knn.isChecked() == True:
             self.knn()
         if self.ui.lr.isChecked() == True:
@@ -72,10 +75,14 @@ class MainWindow(QMainWindow):
 
     def knn(self):
         X_train, X_test, y_train, y_test = train_test_split(
-            X, y, random_state=42)
+            X, y.values.ravel(), random_state=42)
         kn = KNeighborsClassifier()
         kn.fit(X_train, y_train)
-        # print(kn.score(X_test,y_test))
+        y_predict = kn.predict(X_test)
+        self.ui.result.setItem(0,0,QTableWidgetItem("Knn"))
+        self.ui.result.setItem(0,1,QTableWidgetItem(str(accuracy_score(y_test,y_predict))))
+        self.ui.result.setItem(0,2,QTableWidgetItem(str(precision_score(y_test,y_predict,average='weighted'))))
+        self.ui.result.setItem(0,3,QTableWidgetItem(str(recall_score(y_test,y_predict,average='weighted'))))
 
     def linear(self):
         print("lr")

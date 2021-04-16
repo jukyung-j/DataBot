@@ -129,19 +129,19 @@ class Ui_MainWindow(object):
         self.groupBox_5 = QGroupBox(self.Classify)
         self.groupBox_5.setObjectName(u"groupBox_5")
         self.groupBox_5.setGeometry(QRect(390, 30, 561, 411))
-        self.tableWidget = QTableWidget(self.groupBox_5)
-        if (self.tableWidget.columnCount() < 4):
-            self.tableWidget.setColumnCount(4)
+        self.result = QTableWidget(self.groupBox_5)
+        if (self.result.columnCount() < 4):
+            self.result.setColumnCount(4)
         __qtablewidgetitem = QTableWidgetItem()
-        self.tableWidget.setHorizontalHeaderItem(0, __qtablewidgetitem)
+        self.result.setHorizontalHeaderItem(0, __qtablewidgetitem)
         __qtablewidgetitem1 = QTableWidgetItem()
-        self.tableWidget.setHorizontalHeaderItem(1, __qtablewidgetitem1)
+        self.result.setHorizontalHeaderItem(1, __qtablewidgetitem1)
         __qtablewidgetitem2 = QTableWidgetItem()
-        self.tableWidget.setHorizontalHeaderItem(2, __qtablewidgetitem2)
+        self.result.setHorizontalHeaderItem(2, __qtablewidgetitem2)
         __qtablewidgetitem3 = QTableWidgetItem()
-        self.tableWidget.setHorizontalHeaderItem(3, __qtablewidgetitem3)
-        self.tableWidget.setObjectName(u"tableWidget")
-        self.tableWidget.setGeometry(QRect(20, 50, 521, 281))
+        self.result.setHorizontalHeaderItem(3, __qtablewidgetitem3)
+        self.result.setObjectName(u"result")
+        self.result.setGeometry(QRect(20, 50, 521, 281))
         self.tabWidget.addTab(self.Classify, "")
 
         self.horizontalLayout_2.addWidget(self.tabWidget)
@@ -159,7 +159,7 @@ class Ui_MainWindow(object):
         self.openbtn.clicked.connect(MainWindow.openfile)
         self.apply.clicked.connect(MainWindow.apply_algo)
 
-        self.tabWidget.setCurrentIndex(1)
+        self.tabWidget.setCurrentIndex(0)
 
 
         QMetaObject.connectSlotsByName(MainWindow)
@@ -187,13 +187,13 @@ class Ui_MainWindow(object):
         self.lr.setText(QCoreApplication.translate("MainWindow", u"Logistic Regression", None))
         self.apply.setText(QCoreApplication.translate("MainWindow", u"Apply", None))
         self.groupBox_5.setTitle(QCoreApplication.translate("MainWindow", u"Result", None))
-        ___qtablewidgetitem = self.tableWidget.horizontalHeaderItem(0)
+        ___qtablewidgetitem = self.result.horizontalHeaderItem(0)
         ___qtablewidgetitem.setText(QCoreApplication.translate("MainWindow", u"algorithm", None));
-        ___qtablewidgetitem1 = self.tableWidget.horizontalHeaderItem(1)
+        ___qtablewidgetitem1 = self.result.horizontalHeaderItem(1)
         ___qtablewidgetitem1.setText(QCoreApplication.translate("MainWindow", u"accuracy", None));
-        ___qtablewidgetitem2 = self.tableWidget.horizontalHeaderItem(2)
+        ___qtablewidgetitem2 = self.result.horizontalHeaderItem(2)
         ___qtablewidgetitem2.setText(QCoreApplication.translate("MainWindow", u"precision", None));
-        ___qtablewidgetitem3 = self.tableWidget.horizontalHeaderItem(3)
+        ___qtablewidgetitem3 = self.result.horizontalHeaderItem(3)
         ___qtablewidgetitem3.setText(QCoreApplication.translate("MainWindow", u"recall", None));
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.Classify), QCoreApplication.translate("MainWindow", u"Classify", None))
     # retranslateUi
