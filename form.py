@@ -108,7 +108,7 @@ class Ui_MainWindow(object):
         self.Classify.setObjectName(u"Classify")
         self.groupBox = QGroupBox(self.Classify)
         self.groupBox.setObjectName(u"groupBox")
-        self.groupBox.setGeometry(QRect(20, 40, 280, 401))
+        self.groupBox.setGeometry(QRect(20, 80, 280, 401))
         self.verticalLayout = QVBoxLayout(self.groupBox)
         self.verticalLayout.setObjectName(u"verticalLayout")
         self.knn = QCheckBox(self.groupBox)
@@ -142,6 +142,9 @@ class Ui_MainWindow(object):
         self.result.setHorizontalHeaderItem(3, __qtablewidgetitem3)
         self.result.setObjectName(u"result")
         self.result.setGeometry(QRect(20, 50, 521, 281))
+        self.comboBox = QComboBox(self.Classify)
+        self.comboBox.setObjectName(u"comboBox")
+        self.comboBox.setGeometry(QRect(30, 40, 271, 22))
         self.tabWidget.addTab(self.Classify, "")
 
         self.horizontalLayout_2.addWidget(self.tabWidget)
@@ -159,7 +162,7 @@ class Ui_MainWindow(object):
         self.openbtn.clicked.connect(MainWindow.openfile)
         self.apply.clicked.connect(MainWindow.apply_algo)
 
-        self.tabWidget.setCurrentIndex(0)
+        self.tabWidget.setCurrentIndex(1)
 
 
         QMetaObject.connectSlotsByName(MainWindow)
