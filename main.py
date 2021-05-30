@@ -14,8 +14,12 @@ from sklearn.neighbors import KNeighborsClassifier
 from sklearn.metrics import accuracy_score, recall_score, precision_score
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import mean_squared_error, r2_score
-class MainWindow(QMainWindow):
+from sklearn.preprocessing import StandardScaler
 
+df = pd.DataFrame
+X, y, X_train, X_test, y_train, y_test=0,0,0,0,0,0
+
+class MainWindow(QMainWindow):
     def __init__(self):
         super(MainWindow, self).__init__()
         self.ui = Ui_MainWindow()
@@ -30,18 +34,19 @@ class MainWindow(QMainWindow):
             df = pd.read_csv(fileName)
             global X
             global y
-            X = df.iloc[:,:-1]
-            y = df.iloc[:,[-1]]
             global X_train, X_test, y_train, y_test  # train 데이터와 test데이터 나누기
-            X_train, X_test, y_train, y_test = train_test_split(
-                X, y.values.ravel(), random_state=42)
 
             for attr in df.columns: # 변수들 combobox에 추가
                 self.ui.comboBox.addItem(attr)
             result = df.columns[-1]
 
             self.ui.comboBox.setCurrentText(result) #default로 마지막 속성 보여주기
-            self.ui.comboBox.currentIndexChanged.connect(self.on_select)
+            y = df.loc[:, result]
+            X = df[df.columns.difference([result])]
+            X_train, X_test, y_train, y_test = train_test_split(
+                X, y.values.ravel(), random_state=42)
+
+            self.ui.comboBox.currentIndexChanged.connect(self.on_select)    #종속변수가 바뀌면
 
             file_path = os.path.splitext(fileName)[0]
             file_name = file_path.split('/')[-1]
@@ -53,6 +58,16 @@ class MainWindow(QMainWindow):
             self.ui.value.clear()
             self.ui.list.itemClicked.connect(self.list_click)
 
+            # 데이터 표준화(StandardScaler)
+            # Standardization 평균 0 / 분산 1
+            scaler = StandardScaler()
+            scaler.fit(X_train)
+            X_train = scaler.transform(X_train)
+            X_test = scaler.transform(X_test)
+
+            for i in range(len(df.values[0])):
+                if is_string_dtype(df.values[0][i]):
+                    print(df.values[0][i])
 
     def list_click(self):   # 속성들을 클릭하면
         data = df.loc[:9,[self.ui.list.currentItem().text()]]
@@ -78,8 +93,10 @@ class MainWindow(QMainWindow):
             for i in range(len(desc_str)):
                 self.ui.des.setItem(i,0,QTableWidgetItem(str(data.describe().values[i]).strip("[,]")))
 
+
     def on_select(self):    #종속변수 정하기
         result = self.ui.comboBox.currentText()
+        global X,y,X_train,X_test,y_train,y_test
         y = df.loc[:,result]
         X = df[df.columns.difference([result])]
         X_train, X_test, y_train, y_test = train_test_split(
