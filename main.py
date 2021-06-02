@@ -15,9 +15,12 @@ from sklearn.metrics import accuracy_score, recall_score, precision_score
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import mean_squared_error, r2_score
 from sklearn.preprocessing import StandardScaler
+from sklearn.preprocessing import LabelEncoder
+from sklearn.linear_model import Lasso
+from sklearn.linear_model import Ridge
 
 df = pd.DataFrame
-X, y, X_train, X_test, y_train, y_test=0,0,0,0,0,0
+X, y, X_train, X_test, y_train, y_test, x_train, x_test =0,0,0,0,0,0,0,0
 
 class MainWindow(QMainWindow):
     def __init__(self):
@@ -35,10 +38,21 @@ class MainWindow(QMainWindow):
             global X
             global y
             global X_train, X_test, y_train, y_test  # train 데이터와 test데이터 나누기
+            global x_train, x_test
 
             for attr in df.columns: # 변수들 combobox에 추가
                 self.ui.comboBox.addItem(attr)
             result = df.columns[-1]
+
+            # 문자형 데이터 숫자로 바꾸기
+            label = LabelEncoder()
+
+            label.fit(df.sex.drop_duplicates())
+            df.sex = label.transform(df.sex)
+            label.fit(df.smoker.drop_duplicates())
+            df.smoker = label.transform(df.smoker)
+            label.fit(df.region.drop_duplicates())
+            df.region = label.transform(df.region)
 
             self.ui.comboBox.setCurrentText(result) #default로 마지막 속성 보여주기
             y = df.loc[:, result]
@@ -58,6 +72,7 @@ class MainWindow(QMainWindow):
             self.ui.value.clear()
             self.ui.list.itemClicked.connect(self.list_click)
 
+            x_train, x_test = X_train, X_test
             # 데이터 표준화(StandardScaler)
             # Standardization 평균 0 / 분산 1
             scaler = StandardScaler()
@@ -103,30 +118,60 @@ class MainWindow(QMainWindow):
             X, y.values.ravel(), random_state=42)
 
     def apply_algo(self):   #알고리즘 적용
-        self.ui.result.setRowCount(2)
+        self.ui.result.setRowCount(5)
         self.ui.result.verticalHeader().setVisible(False)
+        count = -1
         if self.ui.knn.isChecked() == True:
-            self.knn()
+            count += 1
+            self.knn(count)
         if self.ui.lr.isChecked() == True:
-            self.linear()
+            count += 1
+            self.linear(count)
+        if self.ui.ridge.isChecked() == True:
+            count += 1
+            self.ridge(count)
+        if self.ui.lasso.isChecked() == True:
+            count += 1
+            self.lasso(count)
+        if self.ui.tree.isChecked() == True:
+            count += 1
+            self.tree(count)
 
-    def knn(self):  #knn 알고리즘
+    def knn(self,i):  #knn 알고리즘
         kn = KNeighborsClassifier()
         kn.fit(X_train, y_train)
         y_predict = kn.predict(X_test)
-        self.ui.result.setItem(0,0,QTableWidgetItem("Knn"))
-        self.ui.result.setItem(0,1,QTableWidgetItem(str(round(accuracy_score(y_test,y_predict),5))))
-        self.ui.result.setItem(0,2,QTableWidgetItem(str(round(precision_score(y_test,y_predict,average='weighted'),5))))
-        self.ui.result.setItem(0,3,QTableWidgetItem(str(round(recall_score(y_test,y_predict,average='weighted'),5))))
+        self.ui.result.setItem(i,0,QTableWidgetItem("Knn"))
+        self.ui.result.setItem(i,1,QTableWidgetItem(str(round(accuracy_score(y_test,y_predict),4))))
+        self.ui.result.setItem(i,2,QTableWidgetItem(str(round(precision_score(y_test,y_predict,average='weighted'),4))))
+        self.ui.result.setItem(i,3,QTableWidgetItem(str(round(recall_score(y_test,y_predict,average='weighted'),4))))
 
-    def linear(self):   #linearRegression 알고리즘
+    def linear(self,i):   #linearRegression 알고리즘
         lr = LinearRegression()
         lr.fit(X_train,y_train)
         y_predict = lr.predict(X_test)
-        self.ui.result.setItem(1, 0, QTableWidgetItem("LinearRegression"))
-        self.ui.result.setItem(1, 1, QTableWidgetItem(str(round(lr.score(X_test,y_test),5))))
-        self.ui.result.setItem(1, 2, QTableWidgetItem("r2_score: "+str(round(r2_score(y_test,y_predict),5))))
-        self.ui.result.setItem(1, 3, QTableWidgetItem("MSE: "+str(round(mean_squared_error(y_test,y_predict),5))))
+        self.ui.result.setItem(i, 0, QTableWidgetItem("LinearRegression"))
+        self.ui.result.setItem(i, 1, QTableWidgetItem(str(round(lr.score(X_test,y_test),4))))
+        self.ui.result.setItem(i, 2, QTableWidgetItem("RMSE: "+str(round(mean_squared_error(y_test,y_predict)**0.5,4))))
+        self.ui.result.setItem(i, 3, QTableWidgetItem("MSE: "+str(round(mean_squared_error(y_test,y_predict),4))))
+
+    def ridge(self, i):     #RassoRegression 알고리즘
+        ridge = Ridge()
+        ridge.fit(X_train, y_train)
+        y_predict = ridge.predict(X_test)
+        self.ui.result.setItem(i, 0, QTableWidgetItem("RidgeRegression"))
+        self.ui.result.setItem(i, 1, QTableWidgetItem(str(round(ridge.score(X_test, y_test), 4))))
+        self.ui.result.setItem(i, 2, QTableWidgetItem("RMSE: " + str(round(mean_squared_error(y_test, y_predict)**0.5, 4))))
+        self.ui.result.setItem(i, 3, QTableWidgetItem("MSE: " + str(round(mean_squared_error(y_test, y_predict), 4))))
+
+    def lasso(self, i):     #LassoRegression 알고리즘
+        lasso = Lasso()
+        lasso.fit(X_train,y_train)
+        y_predict = lasso.predict(X_test)
+        self.ui.result.setItem(i, 0, QTableWidgetItem("LassoRegression"))
+        self.ui.result.setItem(i, 1, QTableWidgetItem(str(round(lasso.score(X_test, y_test), 4))))
+        self.ui.result.setItem(i, 2, QTableWidgetItem("RMSE: " + str(round(mean_squared_error(y_test, y_predict) ** 0.5, 4))))
+        self.ui.result.setItem(i, 3, QTableWidgetItem("MSE: " + str(round(mean_squared_error(y_test, y_predict), 4))))
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)

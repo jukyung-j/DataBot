@@ -102,7 +102,7 @@ class Ui_MainWindow(object):
         self.label_2.setGeometry(QRect(260, 20, 64, 15))
         self.openbtn = QPushButton(self.Preprocess)
         self.openbtn.setObjectName(u"openbtn")
-        self.openbtn.setGeometry(QRect(10, 20, 75, 41))
+        self.openbtn.setGeometry(QRect(10, 50, 75, 41))
         self.tabWidget.addTab(self.Preprocess, "")
         self.Classify = QWidget()
         self.Classify.setObjectName(u"Classify")
@@ -120,6 +120,26 @@ class Ui_MainWindow(object):
         self.lr.setObjectName(u"lr")
 
         self.verticalLayout.addWidget(self.lr)
+
+        self.ridge = QCheckBox(self.groupBox)
+        self.ridge.setObjectName(u"ridge")
+
+        self.verticalLayout.addWidget(self.ridge)
+
+        self.lasso = QCheckBox(self.groupBox)
+        self.lasso.setObjectName(u"lasso")
+
+        self.verticalLayout.addWidget(self.lasso)
+
+        self.logistic = QCheckBox(self.groupBox)
+        self.logistic.setObjectName(u"logistic")
+
+        self.verticalLayout.addWidget(self.logistic)
+
+        self.tree = QCheckBox(self.groupBox)
+        self.tree.setObjectName(u"tree")
+
+        self.verticalLayout.addWidget(self.tree)
 
         self.apply = QPushButton(self.groupBox)
         self.apply.setObjectName(u"apply")
@@ -141,7 +161,7 @@ class Ui_MainWindow(object):
         __qtablewidgetitem3 = QTableWidgetItem()
         self.result.setHorizontalHeaderItem(3, __qtablewidgetitem3)
         self.result.setObjectName(u"result")
-        self.result.setGeometry(QRect(20, 50, 521, 281))
+        self.result.setGeometry(QRect(10, 50, 541, 281))
         self.comboBox = QComboBox(self.Classify)
         self.comboBox.setObjectName(u"comboBox")
         self.comboBox.setGeometry(QRect(30, 40, 271, 22))
@@ -187,7 +207,11 @@ class Ui_MainWindow(object):
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.Preprocess), QCoreApplication.translate("MainWindow", u"Preprocess", None))
         self.groupBox.setTitle(QCoreApplication.translate("MainWindow", u"Algorithm", None))
         self.knn.setText(QCoreApplication.translate("MainWindow", u"K-Nearest Neighbor", None))
-        self.lr.setText(QCoreApplication.translate("MainWindow", u"Logistic Regression", None))
+        self.lr.setText(QCoreApplication.translate("MainWindow", u"Linear Regression", None))
+        self.ridge.setText(QCoreApplication.translate("MainWindow", u"Ridge Regression", None))
+        self.lasso.setText(QCoreApplication.translate("MainWindow", u"Lasso Regression", None))
+        self.logistic.setText(QCoreApplication.translate("MainWindow", u"Logistic Regression", None))
+        self.tree.setText(QCoreApplication.translate("MainWindow", u"Decision Tree", None))
         self.apply.setText(QCoreApplication.translate("MainWindow", u"Apply", None))
         self.groupBox_5.setTitle(QCoreApplication.translate("MainWindow", u"Result", None))
         ___qtablewidgetitem = self.result.horizontalHeaderItem(0)
