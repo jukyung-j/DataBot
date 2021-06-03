@@ -18,6 +18,8 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.preprocessing import LabelEncoder
 from sklearn.linear_model import Lasso
 from sklearn.linear_model import Ridge
+from sklearn.linear_model import LogisticRegression
+from sklearn.tree import DecisionTreeClassifier
 
 df = pd.DataFrame
 X, y, X_train, X_test, y_train, y_test, x_train, x_test =0,0,0,0,0,0,0,0
@@ -118,7 +120,7 @@ class MainWindow(QMainWindow):
             X, y.values.ravel(), random_state=42)
 
     def apply_algo(self):   #알고리즘 적용
-        self.ui.result.setRowCount(5)
+        self.ui.result.setRowCount(6)
         self.ui.result.verticalHeader().setVisible(False)
         count = -1
         if self.ui.knn.isChecked() == True:
@@ -133,6 +135,9 @@ class MainWindow(QMainWindow):
         if self.ui.lasso.isChecked() == True:
             count += 1
             self.lasso(count)
+        if self.ui.logistic.isChecked() == True:
+            count += 1
+            self.logistic(count)
         if self.ui.tree.isChecked() == True:
             count += 1
             self.tree(count)
@@ -141,6 +146,7 @@ class MainWindow(QMainWindow):
         kn = KNeighborsClassifier()
         kn.fit(X_train, y_train)
         y_predict = kn.predict(X_test)
+        print(kn.score(X_test,y_test))
         self.ui.result.setItem(i,0,QTableWidgetItem("Knn"))
         self.ui.result.setItem(i,1,QTableWidgetItem(str(round(accuracy_score(y_test,y_predict),4))))
         self.ui.result.setItem(i,2,QTableWidgetItem(str(round(precision_score(y_test,y_predict,average='weighted'),4))))
@@ -172,6 +178,24 @@ class MainWindow(QMainWindow):
         self.ui.result.setItem(i, 1, QTableWidgetItem(str(round(lasso.score(X_test, y_test), 4))))
         self.ui.result.setItem(i, 2, QTableWidgetItem("RMSE: " + str(round(mean_squared_error(y_test, y_predict) ** 0.5, 4))))
         self.ui.result.setItem(i, 3, QTableWidgetItem("MSE: " + str(round(mean_squared_error(y_test, y_predict), 4))))
+
+    def logistic(self, i):      #LogisticRegression 알고리즘
+        lr = LogisticRegression(C=20, max_iter=1000)
+        lr.fit(X_train,y_train)
+        y_predict = lr.predict(X_test)
+        self.ui.result.setItem(i, 0, QTableWidgetItem("LogisticRegression"))
+        self.ui.result.setItem(i, 1, QTableWidgetItem(str(round(accuracy_score(y_test, y_predict), 4))))
+        self.ui.result.setItem(i, 2, QTableWidgetItem(str(round(precision_score(y_test,y_predict,average='weighted'), 4))))
+        self.ui.result.setItem(i, 3, QTableWidgetItem(str(round(recall_score(y_test,y_predict,average='weighted'), 4))))
+
+    def tree(self, i):      #DecisionTree 알고리즘
+        dt = DecisionTreeClassifier(max_depth=10, random_state=42)
+        dt.fit(x_train,y_train)  #표준화 하지 않은 데이터
+        y_predict = dt.predict(x_test)
+        self.ui.result.setItem(i, 0, QTableWidgetItem("DecisionTree"))
+        self.ui.result.setItem(i, 1, QTableWidgetItem(str(round(accuracy_score(y_test, y_predict), 4))))
+        self.ui.result.setItem(i, 2, QTableWidgetItem(str(round(precision_score(y_test, y_predict, average='weighted'), 4))))
+        self.ui.result.setItem(i, 3, QTableWidgetItem(str(round(recall_score(y_test, y_predict, average='weighted'), 4))))
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
