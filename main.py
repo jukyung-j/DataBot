@@ -97,6 +97,7 @@ class MainWindow(QMainWindow):
         self.ui.des.clear()
         self.ui.des.setRowCount(len(desc))
         self.ui.des.setColumnCount(1)
+        self.ui.des.setHorizontalHeaderLabels(["describe"])
         self.ui.des.setVerticalHeaderLabels(desc)
 
         if is_numeric_dtype(data.squeeze()) :   #숫자형 데이터면

@@ -65,16 +65,6 @@ class Ui_MainWindow(object):
 
         self.gridLayout.addWidget(self.instances, 1, 1, 1, 1)
 
-        self.Sumofwieghts = QLabel(self.gridLayoutWidget)
-        self.Sumofwieghts.setObjectName(u"Sumofwieghts")
-
-        self.gridLayout.addWidget(self.Sumofwieghts, 1, 2, 1, 1)
-
-        self.weights = QLabel(self.gridLayoutWidget)
-        self.weights.setObjectName(u"weights")
-
-        self.gridLayout.addWidget(self.weights, 1, 3, 1, 1)
-
         self.groupBox_3 = QGroupBox(self.Preprocess)
         self.groupBox_3.setObjectName(u"groupBox_3")
         self.groupBox_3.setGeometry(QRect(20, 150, 280, 491))
@@ -182,7 +172,7 @@ class Ui_MainWindow(object):
         self.openbtn.clicked.connect(MainWindow.openfile)
         self.apply.clicked.connect(MainWindow.apply_algo)
 
-        self.tabWidget.setCurrentIndex(1)
+        self.tabWidget.setCurrentIndex(0)
 
 
         QMetaObject.connectSlotsByName(MainWindow)
@@ -197,8 +187,6 @@ class Ui_MainWindow(object):
         self.attributes.setText(QCoreApplication.translate("MainWindow", u"None", None))
         self.Instances.setText(QCoreApplication.translate("MainWindow", u"Instances :", None))
         self.instances.setText(QCoreApplication.translate("MainWindow", u"None", None))
-        self.Sumofwieghts.setText(QCoreApplication.translate("MainWindow", u"Sum of weights : ", None))
-        self.weights.setText(QCoreApplication.translate("MainWindow", u"None", None))
         self.groupBox_3.setTitle(QCoreApplication.translate("MainWindow", u"Attributes", None))
         self.groupBox_4.setTitle(QCoreApplication.translate("MainWindow", u"dataset", None))
         self.label.setText(QCoreApplication.translate("MainWindow", u"Value", None))
