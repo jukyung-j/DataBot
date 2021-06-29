@@ -1,25 +1,30 @@
-import os
-import sys
+import os   # 운영체제(OS : Operating System)를 제어
+import sys  # 파이썬 인터프리터를 제어할 수 있는 방법
 
+# Pyside6관련 헤더
 from PySide6.QtCore import QFile,QIODevice
 from PySide6.QtWidgets import *
 from form import Ui_MainWindow
 from PySide6.QtUiTools import QUiLoader
-import pandas as pd
-import numpy as np
-from pandas.api.types import is_numeric_dtype
-from pandas.api.types import is_string_dtype
-from sklearn.model_selection import train_test_split
-from sklearn.neighbors import KNeighborsClassifier
-from sklearn.metrics import accuracy_score, recall_score, precision_score
-from sklearn.linear_model import LinearRegression
-from sklearn.metrics import mean_squared_error, r2_score
-from sklearn.preprocessing import StandardScaler
-from sklearn.preprocessing import LabelEncoder
-from sklearn.linear_model import Lasso
-from sklearn.linear_model import Ridge
-from sklearn.linear_model import LogisticRegression
-from sklearn.tree import DecisionTreeClassifier
+
+import pandas as pd #데이터 프레임과 시리즈를 사용하기 쉽게
+import numpy as np  # 수학적 연산을 쉽게
+
+from pandas.api.types import is_numeric_dtype   # 선택된 속성이 숫자형인지 알아내기 위해
+from pandas.api.types import is_string_dtype    # 선택된 속성이 문자형인지 알아내기 위해
+from sklearn.model_selection import train_test_split    # train데이터와 test데이터 분히
+from sklearn.preprocessing import LabelEncoder  # 문자형데이터를 숫자로 바꾸기 위해
+from sklearn.preprocessing import StandardScaler    # 데이터 표준화
+
+from sklearn.metrics import accuracy_score, recall_score, precision_score   # 분류모델에서 성능평가 지표인 정확도, 재현율, 정밀도 계산
+from sklearn.metrics import mean_squared_error  # 회귀모델에서 성능평가 지표인 MSE 계산
+
+from sklearn.neighbors import KNeighborsClassifier  # Knn 알고리즘 
+from sklearn.linear_model import LinearRegression   # Linear Regression 알고리즘
+from sklearn.linear_model import Lasso              # Lasso Regression 알고리즘
+from sklearn.linear_model import Ridge              # Ridge Regression 알고리즘
+from sklearn.linear_model import LogisticRegression # Logistic Regression 알고리즘
+from sklearn.tree import DecisionTreeClassifier     # Decision Tree 알고리즘
 
 df = pd.DataFrame
 X, y, X_train, X_test, y_train, y_test, x_train, x_test =0,0,0,0,0,0,0,0
@@ -45,16 +50,6 @@ class MainWindow(QMainWindow):
             for attr in df.columns: # 변수들 combobox에 추가
                 self.ui.comboBox.addItem(attr)
             result = df.columns[-1]
-
-            # 문자형 데이터 숫자로 바꾸기
-            label = LabelEncoder()
-
-            label.fit(df.sex.drop_duplicates())
-            df.sex = label.transform(df.sex)
-            label.fit(df.smoker.drop_duplicates())
-            df.smoker = label.transform(df.smoker)
-            label.fit(df.region.drop_duplicates())
-            df.region = label.transform(df.region)
 
             self.ui.comboBox.setCurrentText(result) #default로 마지막 속성 보여주기
             y = df.loc[:, result]
