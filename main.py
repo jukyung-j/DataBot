@@ -1,14 +1,17 @@
 import os   # 운영체제(OS : Operating System)를 제어
 import sys  # 파이썬 인터프리터를 제어할 수 있는 방법
 
-# Pyside6관련 헤더
-from PySide6.QtCore import QFile,QIODevice
-from PySide6.QtWidgets import *
-from form import Ui_MainWindow
-from PySide6.QtUiTools import QUiLoader
+# PyQt5관련 헤더
+from PyQt5.QtCore import QFile,QIODevice
+from PyQt5.QtWidgets import *
+from PyQt5 import uic
 
 import pandas as pd #데이터 프레임과 시리즈를 사용하기 쉽게
 import numpy as np  # 수학적 연산을 쉽게
+
+import matplotlib.pyplot as plt  # 차트그리기
+
+from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 
 from pandas.api.types import is_numeric_dtype   # 선택된 속성이 숫자형인지 알아내기 위해
 from pandas.api.types import is_string_dtype    # 선택된 속성이 문자형인지 알아내기 위해
@@ -29,13 +32,17 @@ from sklearn.tree import DecisionTreeClassifier     # Decision Tree 알고리즘
 df = pd.DataFrame
 X, y, X_train, X_test, y_train, y_test, x_train, x_test =0,0,0,0,0,0,0,0
 
-class MainWindow(QMainWindow):
+form_class = uic.loadUiType("form.ui")[0]
+
+class MainWindow(QMainWindow, form_class):
     def __init__(self):
         super(MainWindow, self).__init__()
-        self.ui = Ui_MainWindow()
-        self.ui.setupUi(self)
+        self.setupUi(self)
+        self.fig = plt.Figure()
+        self.canvas = FigureCanvas(self.fig)
 
     def openfile(self): #파일 열기 버튼 누르면
+
         options = QFileDialog.Options()
         fileName, _ = QFileDialog.getOpenFileName(self, "데이터 파일 열기", \
                                                   "", "All Files(*);;CSV data files(*.csv)", options=options)
@@ -47,150 +54,181 @@ class MainWindow(QMainWindow):
             global X_train, X_test, y_train, y_test  # train 데이터와 test데이터 나누기
             global x_train, x_test
 
+            # 초기화
+            self.list.clear()
+            self.comboBox.clear()
+            self.result.clear()
+            self.comboBox.blockSignals(True) # 파일 다시 열었을 때 충돌 해결
+
             for attr in df.columns: # 변수들 combobox에 추가
-                self.ui.comboBox.addItem(attr)
+                self.comboBox.addItem(attr)
             result = df.columns[-1]
 
-            self.ui.comboBox.setCurrentText(result) #default로 마지막 속성 보여주기
+            self.comboBox.setCurrentText(result) #default로 마지막 속성 보여주기
             y = df.loc[:, result]
             X = df[df.columns.difference([result])]
             X_train, X_test, y_train, y_test = train_test_split(
                 X, y.values.ravel(), random_state=42)
 
-            self.ui.comboBox.currentIndexChanged.connect(self.on_select)    #종속변수가 바뀌면
+            self.comboBox.currentIndexChanged.connect(self.on_select)    #종속변수가 바뀌면
 
             file_path = os.path.splitext(fileName)[0]
             file_name = file_path.split('/')[-1]
-            self.ui.relation.setText(file_name)
-            self.ui.attributes.setText(str(df.shape[1]))
-            self.ui.instances.setText(str(len(df)))
+            self.relation.setText(file_name)
+            self.attributes.setText(str(df.shape[1]))
+            self.instances.setText(str(len(df)))
 
-            self.ui.list.addItems(df.columns)
-            self.ui.value.clear()
-            self.ui.list.itemClicked.connect(self.list_click)
+            self.list.addItems(df.columns)
+            self.value.clear()
+            self.list.itemClicked.connect(self.list_click)
 
             x_train, x_test = X_train, X_test
+
             # 데이터 표준화(StandardScaler)
             # Standardization 평균 0 / 분산 1
-            scaler = StandardScaler()
-            scaler.fit(X_train)
-            X_train = scaler.transform(X_train)
-            X_test = scaler.transform(X_test)
+            # scaler = StandardScaler()
+            # scaler.fit(X_train)
+            # X_train = scaler.transform(X_train)
+            # X_test = scaler.transform(X_test)
 
-            for i in range(len(df.values[0])):
-                if is_string_dtype(df.values[0][i]):
-                    print(df.values[0][i])
 
     def list_click(self):   # 속성들을 클릭하면
-        data = df.loc[:9,[self.ui.list.currentItem().text()]]
-        self.ui.value.clear()
+        curr_data = self.list.currentItem().text()
+        data = df.loc[:9,[curr_data]]
+        self.value.clear()
         for i in range(10):
-            self.ui.value.insertItem(i,QListWidgetItem(str(data.values[i]).strip("[,]")))
+            self.value.insertItem(i,QListWidgetItem(str(data.values[i]).strip("[,]")))
 
         desc =['count','mean','std','min','25%','50%','75%','max']  #데이터가 숫자이면
         desc_str = ['count', 'unique', 'top', 'freq']   #데이터가 문자이면
-        self.ui.des.clear()
-        self.ui.des.setRowCount(len(desc))
-        self.ui.des.setColumnCount(1)
-        self.ui.des.setHorizontalHeaderLabels(["describe"])
-        self.ui.des.setVerticalHeaderLabels(desc)
+        self.des.clear()
+        self.des.setRowCount(len(desc))
+        self.des.setColumnCount(1)
+        self.des.setHorizontalHeaderLabels(["describe"])
+        self.des.setVerticalHeaderLabels(desc)
 
         if is_numeric_dtype(data.squeeze()) :   #숫자형 데이터면
             for i in range(len(desc)):
-                self.ui.des.setItem(i,0,QTableWidgetItem(str(float(data.describe().values[i]))))
+                self.des.setItem(i,0,QTableWidgetItem(str(float(data.describe().values[i]))))
 
         else :  #숫자형 데이터가 아닌경우
-            self.ui.des.setRowCount(len(desc_str))
-            self.ui.des.setVerticalHeaderLabels(desc_str)
-            self.ui.des.setColumnCount(1)
+            self.des.setRowCount(len(desc_str))
+            self.des.setVerticalHeaderLabels(desc_str)
+            self.des.setColumnCount(1)
             for i in range(len(desc_str)):
-                self.ui.des.setItem(i,0,QTableWidgetItem(str(data.describe().values[i]).strip("[,]")))
+                self.des.setItem(i,0,QTableWidgetItem(str(data.describe().values[i]).strip("[,]")))
+
+        # 그래프그리기
+
+        self.dis_graph.addWidget(self.canvas)
+        self.fig.clear()
+
+        x = df.loc[:, [curr_data]]
+        ax = self.fig.add_subplot(111)
+        ax.hist(x,histtype='step')
+
+        self.canvas.draw()
 
 
     def on_select(self):    #종속변수 정하기
-        result = self.ui.comboBox.currentText()
+        result = self.comboBox.currentText()
         global X,y,X_train,X_test,y_train,y_test
         y = df.loc[:,result]
         X = df[df.columns.difference([result])]
         X_train, X_test, y_train, y_test = train_test_split(
             X, y.values.ravel(), random_state=42)
 
+    def algo_all(self):
+        self.knn.toggle()
+        self.lr.toggle()
+        self.ridge.toggle()
+        self.lasso.toggle()
+        self.logistic.toggle()
+        self.tree.toggle()
+
+    def algo_classi(self):
+        self.knn.toggle()
+        self.logistic.toggle()
+        self.tree.toggle()
+
+    def algo_reg(self):
+        self.lr.toggle()
+        self.ridge.toggle()
+        self.lasso.toggle()
+        self.tree.toggle()
+
     def apply_algo(self):   #알고리즘 적용
-        self.ui.result.setRowCount(6)
-        self.ui.result.verticalHeader().setVisible(False)
+        self.result.clear()
+        self.result.setRowCount(6)
+        self.result.verticalHeader().setVisible(False)
         count = -1
-        if self.ui.knn.isChecked() == True:
+        
+        if self.knn.isChecked() == True: # Knn 알고리즘
             count += 1
-            self.knn(count)
-        if self.ui.lr.isChecked() == True:
+            
+            kn = KNeighborsClassifier()
+            kn.fit(X_train, y_train)
+            y_predict = kn.predict(X_test)
+            self.result.setItem(count, 0, QTableWidgetItem("Knn"))
+            self.result.setItem(count, 1, QTableWidgetItem(str(round(accuracy_score(y_test, y_predict), 5))))
+            self.result.setItem(count, 2, QTableWidgetItem(str(round(precision_score(y_test, y_predict, average='weighted'), 5))))
+            self.result.setItem(count, 3, QTableWidgetItem(str(round(recall_score(y_test, y_predict, average='weighted'), 5))))
+
+        if self.lr.isChecked() == True: # Linear Regression 알고리즘
             count += 1
-            self.linear(count)
-        if self.ui.ridge.isChecked() == True:
+
+            lr = LinearRegression()
+            lr.fit(X_train, y_train)
+            y_predict = lr.predict(X_test)
+            self.result.setItem(count, 0, QTableWidgetItem("LinearRegression"))
+            self.result.setItem(count, 1, QTableWidgetItem(str(round(lr.score(X_test, y_test), 5))))
+            self.result.setItem(count, 2, QTableWidgetItem("RMSE: " + str(round(mean_squared_error(y_test, y_predict) ** 0.5, 5))))
+            self.result.setItem(count, 3, QTableWidgetItem("MSE: " + str(round(mean_squared_error(y_test, y_predict), 5))))
+            
+        if self.ridge.isChecked() == True:  # Ridge Regression 알고리즘
             count += 1
-            self.ridge(count)
-        if self.ui.lasso.isChecked() == True:
+
+            ridge = Ridge(alpha=0.001)
+            ridge.fit(X_train, y_train)
+            y_predict = ridge.predict(X_test)
+            self.result.setItem(count, 0, QTableWidgetItem("RidgeRegression"))
+            self.result.setItem(count, 1, QTableWidgetItem(str(round(ridge.score(X_test, y_test), 5))))
+            self.result.setItem(count, 2, QTableWidgetItem("RMSE: " + str(round(mean_squared_error(y_test, y_predict) ** 0.5, 5))))
+            self.result.setItem(count, 3, QTableWidgetItem("MSE: " + str(round(mean_squared_error(y_test, y_predict), 5))))
+            
+        if self.lasso.isChecked() == True:  # Lasso Regression 알고리즘
             count += 1
-            self.lasso(count)
-        if self.ui.logistic.isChecked() == True:
+
+            lasso = Lasso(alpha=0.001)
+            lasso.fit(X_train, y_train)
+            y_predict = lasso.predict(X_test)
+            self.result.setItem(count, 0, QTableWidgetItem("LassoRegression"))
+            self.result.setItem(count, 1, QTableWidgetItem(str(round(lasso.score(X_test, y_test), 5))))
+            self.result.setItem(count, 2, QTableWidgetItem("RMSE: " + str(round(mean_squared_error(y_test, y_predict) ** 0.5, 5))))
+            self.result.setItem(count, 3, QTableWidgetItem("MSE: " + str(round(mean_squared_error(y_test, y_predict), 5))))
+            
+        if self.logistic.isChecked() == True:   # Logistic Regression 앍고리즘
             count += 1
-            self.logistic(count)
-        if self.ui.tree.isChecked() == True:
+
+            lr = LogisticRegression(C=20, max_iter=1000)
+            lr.fit(X_train, y_train)
+            y_predict = lr.predict(X_test)
+            self.result.setItem(count, 0, QTableWidgetItem("LogisticRegression"))
+            self.result.setItem(count, 1, QTableWidgetItem(str(round(accuracy_score(y_test, y_predict), 5))))
+            self.result.setItem(count, 2, QTableWidgetItem(str(round(precision_score(y_test, y_predict, average='weighted'), 5))))
+            self.result.setItem(count, 3, QTableWidgetItem(str(round(recall_score(y_test, y_predict, average='weighted'), 5))))
+            
+        if self.tree.isChecked() == True:   # Decision Tree 알고리즘
             count += 1
-            self.tree(count)
 
-    def knn(self,i):  #knn 알고리즘
-        kn = KNeighborsClassifier()
-        kn.fit(X_train, y_train)
-        y_predict = kn.predict(X_test)
-        self.ui.result.setItem(i,0,QTableWidgetItem("Knn"))
-        self.ui.result.setItem(i,1,QTableWidgetItem(str(round(accuracy_score(y_test,y_predict),5))))
-        self.ui.result.setItem(i,2,QTableWidgetItem(str(round(precision_score(y_test,y_predict,average='weighted'),5))))
-        self.ui.result.setItem(i,3,QTableWidgetItem(str(round(recall_score(y_test,y_predict,average='weighted'),5))))
-
-    def linear(self,i):   #linearRegression 알고리즘
-        lr = LinearRegression()
-        lr.fit(X_train,y_train)
-        y_predict = lr.predict(X_test)
-        self.ui.result.setItem(i, 0, QTableWidgetItem("LinearRegression"))
-        self.ui.result.setItem(i, 1, QTableWidgetItem(str(round(lr.score(X_test,y_test),5))))
-        self.ui.result.setItem(i, 2, QTableWidgetItem("RMSE: "+str(round(mean_squared_error(y_test,y_predict)**0.5,5))))
-        self.ui.result.setItem(i, 3, QTableWidgetItem("MSE: "+str(round(mean_squared_error(y_test,y_predict),5))))
-
-    def ridge(self, i):     #RassoRegression 알고리즘
-        ridge = Ridge(alpha=0.001)
-        ridge.fit(X_train, y_train)
-        y_predict = ridge.predict(X_test)
-        self.ui.result.setItem(i, 0, QTableWidgetItem("RidgeRegression"))
-        self.ui.result.setItem(i, 1, QTableWidgetItem(str(round(ridge.score(X_test, y_test), 5))))
-        self.ui.result.setItem(i, 2, QTableWidgetItem("RMSE: " + str(round(mean_squared_error(y_test, y_predict)**0.5, 5))))
-        self.ui.result.setItem(i, 3, QTableWidgetItem("MSE: " + str(round(mean_squared_error(y_test, y_predict), 5))))
-
-    def lasso(self, i):     #LassoRegression 알고리즘
-        lasso = Lasso(alpha=0.001)
-        lasso.fit(X_train,y_train)
-        y_predict = lasso.predict(X_test)
-        self.ui.result.setItem(i, 0, QTableWidgetItem("LassoRegression"))
-        self.ui.result.setItem(i, 1, QTableWidgetItem(str(round(lasso.score(X_test, y_test), 5))))
-        self.ui.result.setItem(i, 2, QTableWidgetItem("RMSE: " + str(round(mean_squared_error(y_test, y_predict) ** 0.5, 5))))
-        self.ui.result.setItem(i, 3, QTableWidgetItem("MSE: " + str(round(mean_squared_error(y_test, y_predict), 5))))
-
-    def logistic(self, i):      #LogisticRegression 알고리즘
-        lr = LogisticRegression(C=20, max_iter=1000)
-        lr.fit(X_train,y_train)
-        y_predict = lr.predict(X_test)
-        self.ui.result.setItem(i, 0, QTableWidgetItem("LogisticRegression"))
-        self.ui.result.setItem(i, 1, QTableWidgetItem(str(round(accuracy_score(y_test, y_predict), 5))))
-        self.ui.result.setItem(i, 2, QTableWidgetItem(str(round(precision_score(y_test,y_predict,average='weighted'), 5))))
-        self.ui.result.setItem(i, 3, QTableWidgetItem(str(round(recall_score(y_test,y_predict,average='weighted'), 5))))
-
-    def tree(self, i):      #DecisionTree 알고리즘
-        dt = DecisionTreeClassifier(max_depth=5, random_state=42)
-        dt.fit(x_train,y_train)  #표준화 하지 않은 데이터
-        y_predict = dt.predict(x_test)
-        self.ui.result.setItem(i, 0, QTableWidgetItem("DecisionTree"))
-        self.ui.result.setItem(i, 1, QTableWidgetItem(str(round(accuracy_score(y_test, y_predict), 5))))
-        self.ui.result.setItem(i, 2, QTableWidgetItem(str(round(precision_score(y_test, y_predict, average='weighted'), 5))))
-        self.ui.result.setItem(i, 3, QTableWidgetItem(str(round(recall_score(y_test, y_predict, average='weighted'), 5))))
+            dt = DecisionTreeClassifier(max_depth=5, random_state=42)
+            dt.fit(x_train, y_train)  # 표준화 하지 않은 데이터
+            y_predict = dt.predict(x_test)
+            self.result.setItem(count, 0, QTableWidgetItem("DecisionTree"))
+            self.result.setItem(count, 1, QTableWidgetItem(str(round(accuracy_score(y_test, y_predict), 5))))
+            self.result.setItem(count, 2, QTableWidgetItem(str(round(precision_score(y_test, y_predict, average='weighted'), 5))))
+            self.result.setItem(count, 3, QTableWidgetItem(str(round(recall_score(y_test, y_predict, average='weighted'), 5))))
+       
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
