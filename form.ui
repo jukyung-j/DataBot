@@ -214,7 +214,7 @@
         <property name="geometry">
          <rect>
           <x>90</x>
-          <y>400</y>
+          <y>480</y>
           <width>751</width>
           <height>201</height>
          </rect>
@@ -231,14 +231,14 @@
            <height>141</height>
           </rect>
          </property>
-         <layout class="QVBoxLayout" name="verticalLayout_2"/>
+         <layout class="QVBoxLayout" name="box_graph"/>
         </widget>
        </widget>
        <widget class="QGroupBox" name="groupBox_9">
         <property name="geometry">
          <rect>
           <x>90</x>
-          <y>50</y>
+          <y>30</y>
           <width>751</width>
           <height>331</height>
          </rect>
@@ -246,7 +246,7 @@
         <property name="title">
          <string>Missing value</string>
         </property>
-        <widget class="QTableWidget" name="tableWidget">
+        <widget class="QTableWidget" name="miss">
          <property name="geometry">
           <rect>
            <x>40</x>
@@ -257,19 +257,49 @@
          </property>
          <column>
           <property name="text">
-           <string>New Column</string>
+           <string>Coulmns</string>
           </property>
          </column>
          <column>
           <property name="text">
-           <string>Variable</string>
+           <string>Missing</string>
           </property>
          </column>
-         <column>
-          <property name="text">
-           <string>Method</string>
-          </property>
-         </column>
+        </widget>
+       </widget>
+       <widget class="QGroupBox" name="groupBox_10">
+        <property name="geometry">
+         <rect>
+          <x>90</x>
+          <y>380</y>
+          <width>751</width>
+          <height>80</height>
+         </rect>
+        </property>
+        <property name="title">
+         <string>Method</string>
+        </property>
+        <widget class="QWidget" name="">
+         <property name="geometry">
+          <rect>
+           <x>30</x>
+           <y>20</y>
+           <width>671</width>
+           <height>51</height>
+          </rect>
+         </property>
+         <layout class="QHBoxLayout" name="horizontalLayout_3">
+          <item>
+           <widget class="QComboBox" name="method"/>
+          </item>
+          <item>
+           <widget class="QPushButton" name="pushButton">
+            <property name="text">
+             <string>Apply</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
         </widget>
        </widget>
       </widget>
@@ -530,6 +560,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>pushButton</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>method_apply()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>736</x>
+     <y>492</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>817</x>
+     <y>-2</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>openfile()</slot>
@@ -537,5 +583,6 @@
   <slot>algo_all()</slot>
   <slot>algo_classi()</slot>
   <slot>algo_reg()</slot>
+  <slot>method_apply()</slot>
  </slots>
 </ui>
