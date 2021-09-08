@@ -68,10 +68,10 @@ class MainWindow(QMainWindow, form_class):
             result = df.columns[-1]
 
             self.comboBox.setCurrentText(result) #default로 마지막 속성 보여주기
-            y = df.loc[:, result]
-            X = df[df.columns.difference([result])]
+            y = df.iloc[:, -1]
+            X = df.iloc[:,:-1]
             X_train, X_test, y_train, y_test = train_test_split(
-                X, y.values.ravel(), random_state=42)
+                X, y, random_state=42)
 
             self.comboBox.currentIndexChanged.connect(self.on_select)    #종속변수가 바뀌면
 
@@ -108,11 +108,10 @@ class MainWindow(QMainWindow, form_class):
 
     def list_click(self):   # 속성들을 클릭하면
         curr_data = self.list.currentItem().text()
-        data = df.loc[:9,[curr_data]]
+        data = df.loc[:10,[curr_data]]
         self.value.clear()
         for i in range(10):
             self.value.insertItem(i,QListWidgetItem(str(data.values[i]).strip("[,]")))
-
         desc =['count','mean','std','min','25%','50%','75%','max']  #데이터가 숫자이면
         desc_str = ['count', 'unique', 'top', 'freq']   #데이터가 문자이면
         self.des.clear()
@@ -145,24 +144,26 @@ class MainWindow(QMainWindow, form_class):
 
     # 데이터전처리 방법
     def method_apply(self):
-        global df
+        global df,X,y,X_train,X_test,y_train,y_test,x_train, x_test
         if self.method.currentText() == 'delete':   # 결측치 제거
             df = df.dropna()
+        y = df.iloc[:, -1]
+        X = df.iloc[:,:-1]
+        X_train, X_test, y_train, y_test = train_test_split(
+            X, y, random_state=42)
 
-        elif self.method.currentText() == 'mean':   # 평균값
-            imputer = SimpleImputer(strategy="mean")
-            df = pd.DataFrame(imputer.fit_transform(df), columns=df.columns)
-
-        elif self.method.currentText() == 'median':  # 중간값
-            imputer = SimpleImputer(strategy="median")
-            df = pd.DataFrame(imputer.fit_transform(df), columns=df.columns)
-
-        elif self.method.currentText() == 'most_frequent':   # 최빈값
-            imputer = SimpleImputer(strategy="most_frequent")
-            df = pd.DataFrame(imputer.fit_transform(df), columns=df.columns)
-
-
-
+        x_train, x_test = X_train, X_test
+        # elif self.method.currentText() == 'mean':   # 평균값
+        #     imputer = SimpleImputer(strategy="mean")
+        #     df = pd.DataFrame(imputer.fit_transform(df), columns=df.columns)
+        #
+        # elif self.method.currentText() == 'median':  # 중간값
+        #     imputer = SimpleImputer(strategy="median")
+        #     df = pd.DataFrame(imputer.fit_transform(df), columns=df.columns)
+        #
+        # elif self.method.currentText() == 'most_frequent':   # 최빈값
+        #     imputer = SimpleImputer(strategy="most_frequent")
+        #     df = pd.DataFrame(imputer.fit_transform(df), columns=df.columns)
 
     def on_select(self):    #종속변수 정하기
         result = self.comboBox.currentText()
@@ -198,7 +199,7 @@ class MainWindow(QMainWindow, form_class):
         count = -1
         if self.knn.isChecked() == True: # Knn 알고리즘
             count += 1
-            
+
             kn = KNeighborsClassifier()
             kn.fit(X_train, y_train)
             y_predict = kn.predict(X_test)
@@ -217,7 +218,7 @@ class MainWindow(QMainWindow, form_class):
             self.result.setItem(count, 1, QTableWidgetItem(str(round(lr.score(X_test, y_test), 5))))
             self.result.setItem(count, 2, QTableWidgetItem("RMSE: " + str(round(mean_squared_error(y_test, y_predict) ** 0.5, 5))))
             self.result.setItem(count, 3, QTableWidgetItem("MSE: " + str(round(mean_squared_error(y_test, y_predict), 5))))
-            
+
         if self.ridge.isChecked() == True:  # Ridge Regression 알고리즘
             count += 1
 
@@ -228,7 +229,7 @@ class MainWindow(QMainWindow, form_class):
             self.result.setItem(count, 1, QTableWidgetItem(str(round(ridge.score(X_test, y_test), 5))))
             self.result.setItem(count, 2, QTableWidgetItem("RMSE: " + str(round(mean_squared_error(y_test, y_predict) ** 0.5, 5))))
             self.result.setItem(count, 3, QTableWidgetItem("MSE: " + str(round(mean_squared_error(y_test, y_predict), 5))))
-            
+
         if self.lasso.isChecked() == True:  # Lasso Regression 알고리즘
             count += 1
 
@@ -239,7 +240,7 @@ class MainWindow(QMainWindow, form_class):
             self.result.setItem(count, 1, QTableWidgetItem(str(round(lasso.score(X_test, y_test), 5))))
             self.result.setItem(count, 2, QTableWidgetItem("RMSE: " + str(round(mean_squared_error(y_test, y_predict) ** 0.5, 5))))
             self.result.setItem(count, 3, QTableWidgetItem("MSE: " + str(round(mean_squared_error(y_test, y_predict), 5))))
-            
+
         if self.logistic.isChecked() == True:   # Logistic Regression 앍고리즘
             count += 1
 
@@ -250,7 +251,7 @@ class MainWindow(QMainWindow, form_class):
             self.result.setItem(count, 1, QTableWidgetItem(str(round(accuracy_score(y_test, y_predict), 5))))
             self.result.setItem(count, 2, QTableWidgetItem(str(round(precision_score(y_test, y_predict, average='weighted'), 5))))
             self.result.setItem(count, 3, QTableWidgetItem(str(round(recall_score(y_test, y_predict, average='weighted'), 5))))
-            
+
         if self.tree.isChecked() == True:   # Decision Tree 알고리즘
             count += 1
 
@@ -261,8 +262,7 @@ class MainWindow(QMainWindow, form_class):
             self.result.setItem(count, 1, QTableWidgetItem(str(round(accuracy_score(y_test, y_predict), 5))))
             self.result.setItem(count, 2, QTableWidgetItem(str(round(precision_score(y_test, y_predict, average='weighted'), 5))))
             self.result.setItem(count, 3, QTableWidgetItem(str(round(recall_score(y_test, y_predict, average='weighted'), 5))))
-    def closeEvent(self, event):
-        self.deleteLater()
+
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
