@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
  <class>MainWindow</class>
@@ -586,3 +587,593 @@
   <slot>method_apply()</slot>
  </slots>
 </ui>
+=======
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1011</width>
+    <height>784</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>MainWindow</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QHBoxLayout" name="horizontalLayout_2">
+    <item>
+     <widget class="QTabWidget" name="tabWidget">
+      <property name="currentIndex">
+       <number>1</number>
+      </property>
+      <widget class="QWidget" name="Preview">
+       <attribute name="title">
+        <string>Preview</string>
+       </attribute>
+       <widget class="QGroupBox" name="groupBox_2">
+        <property name="geometry">
+         <rect>
+          <x>100</x>
+          <y>10</y>
+          <width>391</width>
+          <height>131</height>
+         </rect>
+        </property>
+        <property name="title">
+         <string>Current relation</string>
+        </property>
+        <widget class="QWidget" name="gridLayoutWidget">
+         <property name="geometry">
+          <rect>
+           <x>24</x>
+           <y>30</y>
+           <width>341</width>
+           <height>80</height>
+          </rect>
+         </property>
+         <layout class="QGridLayout" name="gridLayout">
+          <item row="0" column="1">
+           <widget class="QLabel" name="relation">
+            <property name="text">
+             <string>None</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="2">
+           <widget class="QLabel" name="Attributes">
+            <property name="text">
+             <string>Attributes :</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="0">
+           <widget class="QLabel" name="Relation">
+            <property name="text">
+             <string>Relation :</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="3">
+           <widget class="QLabel" name="attributes">
+            <property name="text">
+             <string>None</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="QLabel" name="Instances">
+            <property name="text">
+             <string>Instances :</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QLabel" name="instances">
+            <property name="text">
+             <string>None</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </widget>
+       <widget class="QGroupBox" name="groupBox_3">
+        <property name="geometry">
+         <rect>
+          <x>20</x>
+          <y>150</y>
+          <width>280</width>
+          <height>491</height>
+         </rect>
+        </property>
+        <property name="title">
+         <string>Attributes</string>
+        </property>
+        <layout class="QHBoxLayout" name="horizontalLayout">
+         <item>
+          <widget class="QListWidget" name="list"/>
+         </item>
+        </layout>
+       </widget>
+       <widget class="QGroupBox" name="groupBox_4">
+        <property name="geometry">
+         <rect>
+          <x>510</x>
+          <y>10</y>
+          <width>451</width>
+          <height>391</height>
+         </rect>
+        </property>
+        <property name="title">
+         <string>dataset</string>
+        </property>
+        <widget class="QListWidget" name="value">
+         <property name="geometry">
+          <rect>
+           <x>20</x>
+           <y>50</y>
+           <width>161</width>
+           <height>321</height>
+          </rect>
+         </property>
+        </widget>
+        <widget class="QLabel" name="label">
+         <property name="geometry">
+          <rect>
+           <x>70</x>
+           <y>20</y>
+           <width>64</width>
+           <height>15</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>Value</string>
+         </property>
+        </widget>
+        <widget class="QTableWidget" name="des">
+         <property name="geometry">
+          <rect>
+           <x>180</x>
+           <y>50</y>
+           <width>256</width>
+           <height>321</height>
+          </rect>
+         </property>
+        </widget>
+        <widget class="QLabel" name="label_2">
+         <property name="geometry">
+          <rect>
+           <x>260</x>
+           <y>20</y>
+           <width>64</width>
+           <height>15</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>Statics</string>
+         </property>
+        </widget>
+       </widget>
+       <widget class="QPushButton" name="openbtn">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>50</y>
+          <width>75</width>
+          <height>41</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Open File</string>
+        </property>
+       </widget>
+       <widget class="QGroupBox" name="groupBox_6">
+        <property name="geometry">
+         <rect>
+          <x>510</x>
+          <y>420</y>
+          <width>461</width>
+          <height>251</height>
+         </rect>
+        </property>
+        <property name="title">
+         <string>distribution</string>
+        </property>
+        <widget class="QWidget" name="verticalLayoutWidget">
+         <property name="geometry">
+          <rect>
+           <x>20</x>
+           <y>29</y>
+           <width>421</width>
+           <height>201</height>
+          </rect>
+         </property>
+         <layout class="QVBoxLayout" name="dis_graph"/>
+        </widget>
+       </widget>
+      </widget>
+      <widget class="QWidget" name="Preprocessing">
+       <attribute name="title">
+        <string>Preprocessing</string>
+       </attribute>
+       <widget class="QGroupBox" name="groupBox_8">
+        <property name="geometry">
+         <rect>
+          <x>90</x>
+          <y>480</y>
+          <width>751</width>
+          <height>201</height>
+         </rect>
+        </property>
+        <property name="title">
+         <string>Box graph</string>
+        </property>
+        <widget class="QWidget" name="verticalLayoutWidget_2">
+         <property name="geometry">
+          <rect>
+           <x>39</x>
+           <y>29</y>
+           <width>641</width>
+           <height>141</height>
+          </rect>
+         </property>
+         <layout class="QVBoxLayout" name="box_graph"/>
+        </widget>
+       </widget>
+       <widget class="QGroupBox" name="groupBox_9">
+        <property name="geometry">
+         <rect>
+          <x>90</x>
+          <y>30</y>
+          <width>751</width>
+          <height>331</height>
+         </rect>
+        </property>
+        <property name="title">
+         <string>Missing value</string>
+        </property>
+        <widget class="QTableWidget" name="miss">
+         <property name="geometry">
+          <rect>
+           <x>40</x>
+           <y>51</y>
+           <width>661</width>
+           <height>241</height>
+          </rect>
+         </property>
+         <column>
+          <property name="text">
+           <string>Coulmns</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>Missing</string>
+          </property>
+         </column>
+        </widget>
+       </widget>
+       <widget class="QGroupBox" name="groupBox_10">
+        <property name="geometry">
+         <rect>
+          <x>90</x>
+          <y>380</y>
+          <width>751</width>
+          <height>80</height>
+         </rect>
+        </property>
+        <property name="title">
+         <string>Method</string>
+        </property>
+        <widget class="QWidget" name="">
+         <property name="geometry">
+          <rect>
+           <x>30</x>
+           <y>20</y>
+           <width>671</width>
+           <height>51</height>
+          </rect>
+         </property>
+         <layout class="QHBoxLayout" name="horizontalLayout_3">
+          <item>
+           <widget class="QComboBox" name="method"/>
+          </item>
+          <item>
+           <widget class="QPushButton" name="pushButton">
+            <property name="text">
+             <string>Apply</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </widget>
+      </widget>
+      <widget class="QWidget" name="Classify">
+       <attribute name="title">
+        <string>Classify</string>
+       </attribute>
+       <widget class="QGroupBox" name="groupBox">
+        <property name="geometry">
+         <rect>
+          <x>20</x>
+          <y>140</y>
+          <width>311</width>
+          <height>361</height>
+         </rect>
+        </property>
+        <property name="title">
+         <string>Algorithm</string>
+        </property>
+        <layout class="QVBoxLayout" name="verticalLayout">
+         <item>
+          <widget class="QPushButton" name="all_btn">
+           <property name="text">
+            <string>All</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QSplitter" name="splitter">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <widget class="QPushButton" name="classi_btn">
+            <property name="text">
+             <string>Classification</string>
+            </property>
+           </widget>
+           <widget class="QPushButton" name="reg_btn">
+            <property name="text">
+             <string>Regression</string>
+            </property>
+           </widget>
+          </widget>
+         </item>
+         <item>
+          <widget class="QCheckBox" name="knn">
+           <property name="text">
+            <string>K-Nearest Neighbor</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QCheckBox" name="lr">
+           <property name="text">
+            <string>Linear Regression</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QCheckBox" name="ridge">
+           <property name="text">
+            <string>Ridge Regression</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QCheckBox" name="lasso">
+           <property name="text">
+            <string>Lasso Regression</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QCheckBox" name="logistic">
+           <property name="text">
+            <string>Logistic Regression</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QCheckBox" name="tree">
+           <property name="text">
+            <string>Decision Tree</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="apply">
+           <property name="text">
+            <string>Apply</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+       <widget class="QGroupBox" name="groupBox_5">
+        <property name="geometry">
+         <rect>
+          <x>390</x>
+          <y>30</y>
+          <width>561</width>
+          <height>411</height>
+         </rect>
+        </property>
+        <property name="title">
+         <string>Result</string>
+        </property>
+        <widget class="QTableWidget" name="result">
+         <property name="geometry">
+          <rect>
+           <x>10</x>
+           <y>50</y>
+           <width>541</width>
+           <height>281</height>
+          </rect>
+         </property>
+         <column>
+          <property name="text">
+           <string>algorithm</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>accuracy</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>precision</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>recall</string>
+          </property>
+         </column>
+        </widget>
+       </widget>
+       <widget class="QGroupBox" name="groupBox_7">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>30</y>
+          <width>321</width>
+          <height>80</height>
+         </rect>
+        </property>
+        <property name="title">
+         <string>Dependent variable</string>
+        </property>
+        <widget class="QComboBox" name="comboBox">
+         <property name="geometry">
+          <rect>
+           <x>20</x>
+           <y>40</y>
+           <width>271</width>
+           <height>22</height>
+          </rect>
+         </property>
+        </widget>
+       </widget>
+      </widget>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>1011</width>
+     <height>26</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+ </widget>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>apply</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>apply_algo()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>207</x>
+     <y>549</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>751</x>
+     <y>-11</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>openbtn</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>openfile()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>91</x>
+     <y>119</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>483</x>
+     <y>-5</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>all_btn</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>algo_all()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>238</x>
+     <y>235</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>339</x>
+     <y>-16</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>classi_btn</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>algo_classi()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>94</x>
+     <y>332</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>175</x>
+     <y>-16</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>reg_btn</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>algo_reg()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>281</x>
+     <y>317</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>531</x>
+     <y>-19</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pushButton</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>method_apply()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>736</x>
+     <y>492</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>817</x>
+     <y>-2</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>openfile()</slot>
+  <slot>apply_algo()</slot>
+  <slot>algo_all()</slot>
+  <slot>algo_classi()</slot>
+  <slot>algo_reg()</slot>
+  <slot>method_apply()</slot>
+ </slots>
+</ui>
+>>>>>>> bae2b6a9b6d11ad486c95d65d14e386e61d25064
