@@ -147,23 +147,29 @@ class MainWindow(QMainWindow, form_class):
         global df,X,y,X_train,X_test,y_train,y_test,x_train, x_test
         if self.method.currentText() == 'delete':   # 결측치 제거
             df = df.dropna()
+
+        elif self.method.currentText() == 'mean':   # 평균값
+            imputer = SimpleImputer(strategy="mean")
+            df = pd.DataFrame(imputer.fit_transform(df), columns=df.columns)
+
+        elif self.method.currentText() == 'median':  # 중간값
+            imputer = SimpleImputer(strategy="median")
+            df = pd.DataFrame(imputer.fit_transform(df), columns=df.columns)
+
+        elif self.method.currentText() == 'most_frequent':   # 최빈값
+            imputer = SimpleImputer(strategy="most_frequent")
+            df = pd.DataFrame(imputer.fit_transform(df), columns=df.columns)
         y = df.iloc[:, -1]
-        X = df.iloc[:,:-1]
+        X = df.iloc[:, :-1]
         X_train, X_test, y_train, y_test = train_test_split(
             X, y, random_state=42)
 
-        x_train, x_test = X_train, X_test
-        # elif self.method.currentText() == 'mean':   # 평균값
-        #     imputer = SimpleImputer(strategy="mean")
-        #     df = pd.DataFrame(imputer.fit_transform(df), columns=df.columns)
-        #
-        # elif self.method.currentText() == 'median':  # 중간값
-        #     imputer = SimpleImputer(strategy="median")
-        #     df = pd.DataFrame(imputer.fit_transform(df), columns=df.columns)
-        #
-        # elif self.method.currentText() == 'most_frequent':   # 최빈값
-        #     imputer = SimpleImputer(strategy="most_frequent")
-        #     df = pd.DataFrame(imputer.fit_transform(df), columns=df.columns)
+        x_train, x_test = X_train, X_test   # Decision Tree
+
+        # Missing Value 다시보여주기
+        column_length = df.shape[1]
+        for i in range(column_length):
+            self.miss.setItem(i, 1, QTableWidgetItem(str(df.isnull().sum()[i])))
 
     def on_select(self):    #종속변수 정하기
         result = self.comboBox.currentText()
