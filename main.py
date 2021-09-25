@@ -13,27 +13,26 @@ import matplotlib.pyplot as plt  # 차트그리기
 
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas    # 그래프그리기
 
-from pandas.api.types import is_numeric_dtype   # 선택된 속성이 숫자형인지 알아내기 위해
-from pandas.api.types import is_string_dtype    # 선택된 속성이 문자형인지 알아내기 위해
-from sklearn.model_selection import train_test_split    # train데이터와 test데이터 분히
-from sklearn.preprocessing import LabelEncoder  # 문자형데이터를 숫자로 바꾸기 위해
-from sklearn.preprocessing import StandardScaler    # 데이터 표준화
+from pandas.api.types import is_numeric_dtype, is_string_dtype   # 선택된 속성이 숫자형 문자형인지 알아내기 위해
+from sklearn.model_selection import train_test_split, GridSearchCV,cross_validate    # train데이터와 test데이터 분리, 하이퍼파라미터 튜닝
+from sklearn.preprocessing import LabelEncoder, StandardScaler  # 문자형데이터를 숫자로 바꾸기 위해, 데이터 표준화
 from sklearn.impute import SimpleImputer    # 결측치 처리방법
 
-from sklearn.metrics import accuracy_score, recall_score, precision_score   # 분류모델에서 성능평가 지표인 정확도, 재현율, 정밀도 계산
-from sklearn.metrics import mean_squared_error  # 회귀모델에서 성능평가 지표인 MSE 계산
+from sklearn.metrics import accuracy_score, recall_score, precision_score, mean_squared_error   # 분류모델에서 성능평가 지표인 정확도, 재현율, 정밀도 계산, 회귀모델에서 성능평가 지표인 MSE 계산
 
 from sklearn.neighbors import KNeighborsClassifier  # Knn 알고리즘 
-from sklearn.linear_model import LinearRegression   # Linear Regression 알고리즘
-from sklearn.linear_model import Lasso              # Lasso Regression 알고리즘
-from sklearn.linear_model import Ridge              # Ridge Regression 알고리즘
-from sklearn.linear_model import LogisticRegression # Logistic Regression 알고리즘
+from sklearn.linear_model import LinearRegression, Lasso, Ridge, LogisticRegression   # Linear Regression, Lasso Regression, Ridge Regression, Logistic Regression 알고리즘
 from sklearn.tree import DecisionTreeClassifier     # Decision Tree 알고리즘
 
 df = pd.DataFrame
 X, y, X_train, X_test, y_train, y_test, x_train, x_test =0,0,0,0,0,0,0,0
-
+dcount,kf = 0,0
 form_class = uic.loadUiType("form.ui")[0]
+dt_class = uic.loadUiType("dt.ui")[0]
+
+
+
+
 
 class MainWindow(QMainWindow, form_class):
     def __init__(self):
@@ -62,6 +61,7 @@ class MainWindow(QMainWindow, form_class):
             self.result.clear()
             self.comboBox.blockSignals(True) # 파일 다시 열었을 때 충돌 해결
             self.method.blockSignals(True)
+            self.k_fold.clear()
 
             for attr in df.columns: # 변수들 combobox에 추가
                 self.comboBox.addItem(attr)
@@ -85,6 +85,8 @@ class MainWindow(QMainWindow, form_class):
             self.value.clear()
             self.list.itemClicked.connect(self.list_click)
 
+            self.k_fold.addItems(["5","10"])
+
             x_train, x_test = X_train, X_test
 
             # 데이터 전처리
@@ -97,6 +99,16 @@ class MainWindow(QMainWindow, form_class):
             self.method.addItem("mean")
             self.method.addItem("median")
             self.method.addItem("most_frequent")
+
+            # Box graph
+            self.box_graph.addWidget(self.canvas)
+            self.fig.clear()
+
+            ax = self.fig.add_subplot(111)
+            ax.boxplot(X)
+            ax.set_xticklabels(X)
+
+            self.canvas.draw()
 
             # 데이터 표준화(StandardScaler)
             # Standardization 평균 0 / 분산 1
@@ -131,6 +143,8 @@ class MainWindow(QMainWindow, form_class):
             for i in range(len(desc_str)):
                 self.des.setItem(i,0,QTableWidgetItem(str(data.describe().values[i]).strip("[,]")))
 
+        self.des.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeToContents)
+
         # 그래프그리기
 
         self.dis_graph.addWidget(self.canvas)
@@ -142,7 +156,7 @@ class MainWindow(QMainWindow, form_class):
 
         self.canvas.draw()
 
-    # 데이터전처리 방법
+    # 결측치 처리 방법
     def method_apply(self):
         global df,X,y,X_train,X_test,y_train,y_test,x_train, x_test
         if self.method.currentText() == 'delete':   # 결측치 제거
@@ -179,7 +193,7 @@ class MainWindow(QMainWindow, form_class):
         X_train, X_test, y_train, y_test = train_test_split(
             X, y.values.ravel(), random_state=42)
 
-    def algo_all(self):
+    def algo_all(self): # 알고리즘 All 버튼 클릭
         self.knn.toggle()
         self.lr.toggle()
         self.ridge.toggle()
@@ -187,32 +201,41 @@ class MainWindow(QMainWindow, form_class):
         self.logistic.toggle()
         self.tree.toggle()
 
-    def algo_classi(self):
+    def algo_classi(self):  # 알고리즘 classification 버튼 클릭
         self.knn.toggle()
         self.logistic.toggle()
         self.tree.toggle()
 
-    def algo_reg(self):
+    def algo_reg(self): # 알고리즘 regression 버튼 클릭
         self.lr.toggle()
         self.ridge.toggle()
         self.lasso.toggle()
         self.tree.toggle()
+
 
     def apply_algo(self):   #알고리즘 적용
         self.result.clear()
-        self.result.setRowCount(6)
-        self.result.verticalHeader().setVisible(False)
+        self.result.setHorizontalHeaderLabels(["algorithm",'params','accuracy','precision','recall'])
+
         count = -1
+
+        k = int(self.k_fold.currentText())  # kfold
         if self.knn.isChecked() == True: # Knn 알고리즘
             count += 1
 
             kn = KNeighborsClassifier()
-            kn.fit(X_train, y_train)
-            y_predict = kn.predict(X_test)
+
+            params = {'n_neighbors' : [1, 3, 5, 7, 9, 11]}  # 하이퍼파라미터
+            kn_models = GridSearchCV(kn, params, cv=k, n_jobs=-1)
+            kn_models.fit(X_train,y_train)
+            knn = kn_models.best_estimator_
+            y_pred = knn.predict(X_test)
+
             self.result.setItem(count, 0, QTableWidgetItem("Knn"))
-            self.result.setItem(count, 1, QTableWidgetItem(str(round(accuracy_score(y_test, y_predict), 5))))
-            self.result.setItem(count, 2, QTableWidgetItem(str(round(precision_score(y_test, y_predict, average='weighted'), 5))))
-            self.result.setItem(count, 3, QTableWidgetItem(str(round(recall_score(y_test, y_predict, average='weighted'), 5))))
+            self.result.setItem(count, 1, QTableWidgetItem(str(kn_models.best_params_)))
+            self.result.setItem(count, 2, QTableWidgetItem(str(round(accuracy_score(y_test, y_pred), 5))))
+            self.result.setItem(count, 3, QTableWidgetItem(str(round(precision_score(y_test, y_pred, average='weighted'), 5))))
+            self.result.setItem(count, 4, QTableWidgetItem(str(round(recall_score(y_test, y_pred, average='weighted'), 5))))
 
         if self.lr.isChecked() == True: # Linear Regression 알고리즘
             count += 1
@@ -221,54 +244,129 @@ class MainWindow(QMainWindow, form_class):
             lr.fit(X_train, y_train)
             y_predict = lr.predict(X_test)
             self.result.setItem(count, 0, QTableWidgetItem("LinearRegression"))
-            self.result.setItem(count, 1, QTableWidgetItem(str(round(lr.score(X_test, y_test), 5))))
-            self.result.setItem(count, 2, QTableWidgetItem("RMSE: " + str(round(mean_squared_error(y_test, y_predict) ** 0.5, 5))))
-            self.result.setItem(count, 3, QTableWidgetItem("MSE: " + str(round(mean_squared_error(y_test, y_predict), 5))))
+            self.result.setItem(count, 2, QTableWidgetItem(str(round(lr.score(X_test, y_test), 5))))
+            self.result.setItem(count, 3, QTableWidgetItem("RMSE: " + str(round(mean_squared_error(y_test, y_predict) ** 0.5, 5))))
+            self.result.setItem(count, 4, QTableWidgetItem("MSE: " + str(round(mean_squared_error(y_test, y_predict), 5))))
 
         if self.ridge.isChecked() == True:  # Ridge Regression 알고리즘
             count += 1
 
-            ridge = Ridge(alpha=0.001)
-            ridge.fit(X_train, y_train)
-            y_predict = ridge.predict(X_test)
+            ridge = Ridge()
+            alphas = [0.001, 0.01, 0.1, 1, 10, 100, 1000]
+            params = {'alpha': alphas}  # 하이퍼파라미터
+            ri_models = GridSearchCV(ridge, params, cv=k, n_jobs=-1)
+            ri_models.fit(X_train, y_train)
+            ri = ri_models.best_estimator_
+            y_pred = ri.predict(X_test)
+
             self.result.setItem(count, 0, QTableWidgetItem("RidgeRegression"))
-            self.result.setItem(count, 1, QTableWidgetItem(str(round(ridge.score(X_test, y_test), 5))))
-            self.result.setItem(count, 2, QTableWidgetItem("RMSE: " + str(round(mean_squared_error(y_test, y_predict) ** 0.5, 5))))
-            self.result.setItem(count, 3, QTableWidgetItem("MSE: " + str(round(mean_squared_error(y_test, y_predict), 5))))
+            self.result.setItem(count, 1, QTableWidgetItem(str(ri_models.best_params_)))
+            self.result.setItem(count, 2, QTableWidgetItem(str(round(ri.score(X_test, y_test), 5))))
+            self.result.setItem(count, 3, QTableWidgetItem("RMSE: " + str(round(mean_squared_error(y_test, y_pred) ** 0.5, 5))))
+            self.result.setItem(count, 4, QTableWidgetItem("MSE: " + str(round(mean_squared_error(y_test, y_pred), 5))))
 
         if self.lasso.isChecked() == True:  # Lasso Regression 알고리즘
             count += 1
 
-            lasso = Lasso(alpha=0.001)
-            lasso.fit(X_train, y_train)
-            y_predict = lasso.predict(X_test)
+            lasso = Lasso()
+            alphas = [0.001, 0.01, 0.1, 1, 10, 100, 1000]
+            params = {'alpha': alphas}  # 하이퍼파라미터
+            la_models = GridSearchCV(lasso, params, cv=k, n_jobs=-1)
+            la_models.fit(X_train, y_train)
+            la = la_models.best_estimator_
+            y_pred = la.predict(X_test)
+
+            # print(round(la_models.best_params_,5))
             self.result.setItem(count, 0, QTableWidgetItem("LassoRegression"))
-            self.result.setItem(count, 1, QTableWidgetItem(str(round(lasso.score(X_test, y_test), 5))))
-            self.result.setItem(count, 2, QTableWidgetItem("RMSE: " + str(round(mean_squared_error(y_test, y_predict) ** 0.5, 5))))
-            self.result.setItem(count, 3, QTableWidgetItem("MSE: " + str(round(mean_squared_error(y_test, y_predict), 5))))
+            self.result.setItem(count, 1, QTableWidgetItem(str(la_models.best_params_)))
+            self.result.setItem(count, 2, QTableWidgetItem(str(round(la.score(X_test, y_test), 5))))
+            self.result.setItem(count, 3, QTableWidgetItem("RMSE: " + str(round(mean_squared_error(y_test, y_pred) ** 0.5, 5))))
+            self.result.setItem(count, 4, QTableWidgetItem("MSE: " + str(round(mean_squared_error(y_test, y_pred), 5))))
 
         if self.logistic.isChecked() == True:   # Logistic Regression 앍고리즘
             count += 1
 
-            lr = LogisticRegression(C=20, max_iter=1000)
-            lr.fit(X_train, y_train)
-            y_predict = lr.predict(X_test)
+            params = {'C':[0.001, 0.01, 0.1, 1, 10, 100],
+                      'max_iter':[100,1000]}
+            lgr = LogisticRegression()
+            lgr_models = GridSearchCV(lgr, params, cv=k, n_jobs=-1)
+            lgr_models.fit(X_train, y_train)
+            lr = lgr_models.best_estimator_
+            y_pred = lr.predict(X_test)
+
             self.result.setItem(count, 0, QTableWidgetItem("LogisticRegression"))
-            self.result.setItem(count, 1, QTableWidgetItem(str(round(accuracy_score(y_test, y_predict), 5))))
-            self.result.setItem(count, 2, QTableWidgetItem(str(round(precision_score(y_test, y_predict, average='weighted'), 5))))
-            self.result.setItem(count, 3, QTableWidgetItem(str(round(recall_score(y_test, y_predict, average='weighted'), 5))))
+            self.result.setItem(count, 1, QTableWidgetItem(str(lgr_models.best_params_)))
+            self.result.setItem(count, 2, QTableWidgetItem(str(round(accuracy_score(y_test, y_pred), 5))))
+            self.result.setItem(count, 3, QTableWidgetItem(str(round(precision_score(y_test, y_pred, average='weighted'), 5))))
+            self.result.setItem(count, 4, QTableWidgetItem(str(round(recall_score(y_test, y_pred, average='weighted'), 5))))
 
         if self.tree.isChecked() == True:   # Decision Tree 알고리즘
             count += 1
 
-            dt = DecisionTreeClassifier(max_depth=5, random_state=42)
-            dt.fit(x_train, y_train)  # 표준화 하지 않은 데이터
-            y_predict = dt.predict(x_test)
-            self.result.setItem(count, 0, QTableWidgetItem("DecisionTree"))
-            self.result.setItem(count, 1, QTableWidgetItem(str(round(accuracy_score(y_test, y_predict), 5))))
-            self.result.setItem(count, 2, QTableWidgetItem(str(round(precision_score(y_test, y_predict, average='weighted'), 5))))
-            self.result.setItem(count, 3, QTableWidgetItem(str(round(recall_score(y_test, y_predict, average='weighted'), 5))))
+            self.second = SubWindow(count,k)
 
+            self.second.show()
+        self.result.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeToContents)
+
+    def decision_tree(self,params,y_pred):
+
+        pass
+        # self.result.setItem(dcount, 0, QTableWidgetItem("DecisionTree"))
+        # self.result.setItem(dcount, 1, QTableWidgetItem(str(params)))
+        # self.result.setItem(dcount, 2, QTableWidgetItem(str(round(accuracy_score(y_test, y_pred), 5))))
+        # self.result.setItem(dcount, 3, QTableWidgetItem(str(round(precision_score(y_test, y_pred, average='weighted'), 5))))
+        # self.result.setItem(dcount, 4, QTableWidgetItem(str(round(recall_score(y_test, y_pred, average='weighted'), 5))))
+        # self.result.setItem(dcount+1, 3, QTableWidgetItem("RMSE: " + str(round(mean_squared_error(y_test, y_pred) ** 0.5, 5))))
+        # self.result.setItem(dcount+1, 4, QTableWidgetItem("MSE: " + str(round(mean_squared_error(y_test, y_pred), 5))))
+
+
+class SubWindow(QMainWindow, dt_class):     # Decision Tree Setting
+    def __init__(self,c,k):
+        global dcount, kf
+        super(QMainWindow, self).__init__()
+        self.setupUi(self)
+        self.splitter.setChecked(True)  # splitter 기본으로 best
+        dcount = c
+        kf = k
+
+    def dt_apply(self):
+        splitter = "best" if self.splitter.isChecked else "random"
+
+        # spinbox 최솟값 설정
+        self.max_depth.setMinimum(1)
+        self.min_samples_splits.setMinimum(2)
+        self.min_samples_leaf.setMinimum(1)
+        self.min_weight.setRange(0.0,0.5)
+        self.max_features.setMinimum(1)
+        self.max_leaf.setMinimum(2)
+        self.min_impurity.setMinimum(0.0)
+
+        p = dict()
+        # 값 가져오기
+        p['splitter'] = splitter
+        p['max_depth'] = self.max_depth.value()
+        p['min_samples_splits'] = self.min_samples_splits.value()
+        p['min_samples_leaf'] = self.min_samples_leaf.value()
+        p['min_weight'] = self.min_weight.value()
+        p['max_features'] = self.max_features.value()
+        p['seed'] = self.seed.value()
+        p['max_leaf'] = self.max_leaf.value()
+        p['min_impurity'] = self.min_impurity.value()
+
+        params={'splitter':[p['splitter']], 'max_depth':[p['max_depth']], 'min_samples_split':[p['min_samples_splits']],
+                                    'min_samples_leaf':[p['min_samples_leaf']], 'min_weight_fraction_leaf':[p['min_weight']],
+                                    'max_features':[p['max_features']], 'max_leaf_nodes':[p['max_leaf']], 'min_impurity_decrease':[p['min_impurity']],
+                                    'random_state':[p['seed']]}
+
+        dt = DecisionTreeClassifier()
+        dt_models = GridSearchCV(dt, params, cv=kf, n_jobs=-1)
+        dt_models.fit(x_train, y_train)
+        dte = dt_models.best_estimator_
+        y_pred = dte.predict(X_test)
+
+        MainWindow().decision_tree(params,y_pred)
+
+        self.close()
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)

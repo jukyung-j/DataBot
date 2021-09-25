@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1011</width>
+    <width>1028</width>
     <height>784</height>
    </rect>
   </property>
@@ -17,8 +17,11 @@
    <layout class="QHBoxLayout" name="horizontalLayout_2">
     <item>
      <widget class="QTabWidget" name="tabWidget">
+      <property name="autoFillBackground">
+       <bool>false</bool>
+      </property>
       <property name="currentIndex">
-       <number>1</number>
+       <number>2</number>
       </property>
       <widget class="QWidget" name="Preview">
        <attribute name="title">
@@ -213,22 +216,22 @@
        <widget class="QGroupBox" name="groupBox_8">
         <property name="geometry">
          <rect>
-          <x>90</x>
-          <y>480</y>
-          <width>751</width>
-          <height>201</height>
+          <x>20</x>
+          <y>450</y>
+          <width>971</width>
+          <height>231</height>
          </rect>
         </property>
         <property name="title">
-         <string>Box graph</string>
+         <string>Box plot</string>
         </property>
         <widget class="QWidget" name="verticalLayoutWidget_2">
          <property name="geometry">
           <rect>
-           <x>39</x>
-           <y>29</y>
-           <width>641</width>
-           <height>141</height>
+           <x>-1</x>
+           <y>19</y>
+           <width>971</width>
+           <height>211</height>
           </rect>
          </property>
          <layout class="QVBoxLayout" name="box_graph"/>
@@ -237,10 +240,10 @@
        <widget class="QGroupBox" name="groupBox_9">
         <property name="geometry">
          <rect>
-          <x>90</x>
-          <y>30</y>
-          <width>751</width>
-          <height>331</height>
+          <x>80</x>
+          <y>10</y>
+          <width>361</width>
+          <height>431</height>
          </rect>
         </property>
         <property name="title">
@@ -250,9 +253,9 @@
          <property name="geometry">
           <rect>
            <x>40</x>
-           <y>51</y>
-           <width>661</width>
-           <height>241</height>
+           <y>41</y>
+           <width>281</width>
+           <height>371</height>
           </rect>
          </property>
          <column>
@@ -270,21 +273,21 @@
        <widget class="QGroupBox" name="groupBox_10">
         <property name="geometry">
          <rect>
-          <x>90</x>
-          <y>380</y>
-          <width>751</width>
+          <x>480</x>
+          <y>100</y>
+          <width>461</width>
           <height>80</height>
          </rect>
         </property>
         <property name="title">
          <string>Method</string>
         </property>
-        <widget class="QWidget" name="">
+        <widget class="QWidget" name="layoutWidget">
          <property name="geometry">
           <rect>
-           <x>30</x>
+           <x>20</x>
            <y>20</y>
-           <width>671</width>
+           <width>431</width>
            <height>51</height>
           </rect>
          </property>
@@ -298,6 +301,34 @@
              <string>Apply</string>
             </property>
            </widget>
+          </item>
+         </layout>
+        </widget>
+       </widget>
+       <widget class="QGroupBox" name="groupBox_11">
+        <property name="geometry">
+         <rect>
+          <x>480</x>
+          <y>210</y>
+          <width>461</width>
+          <height>80</height>
+         </rect>
+        </property>
+        <property name="title">
+         <string>K-fold</string>
+        </property>
+        <widget class="QWidget" name="layoutWidget_2">
+         <property name="geometry">
+          <rect>
+           <x>20</x>
+           <y>20</y>
+           <width>431</width>
+           <height>51</height>
+          </rect>
+         </property>
+         <layout class="QHBoxLayout" name="horizontalLayout_4">
+          <item>
+           <widget class="QComboBox" name="k_fold"/>
           </item>
          </layout>
         </widget>
@@ -398,9 +429,9 @@
        <widget class="QGroupBox" name="groupBox_5">
         <property name="geometry">
          <rect>
-          <x>390</x>
+          <x>340</x>
           <y>30</y>
-          <width>561</width>
+          <width>641</width>
           <height>411</height>
          </rect>
         </property>
@@ -411,14 +442,32 @@
          <property name="geometry">
           <rect>
            <x>10</x>
-           <y>50</y>
-           <width>541</width>
-           <height>281</height>
+           <y>30</y>
+           <width>621</width>
+           <height>361</height>
           </rect>
          </property>
+         <property name="autoFillBackground">
+          <bool>false</bool>
+         </property>
+         <property name="rowCount">
+          <number>7</number>
+         </property>
+         <row/>
+         <row/>
+         <row/>
+         <row/>
+         <row/>
+         <row/>
+         <row/>
          <column>
           <property name="text">
            <string>algorithm</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>params</string>
           </property>
          </column>
          <column>
@@ -471,7 +520,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1011</width>
+     <width>1028</width>
      <height>26</height>
     </rect>
    </property>
@@ -567,8 +616,8 @@
    <slot>method_apply()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>736</x>
-     <y>492</y>
+     <x>942</x>
+     <y>219</y>
     </hint>
     <hint type="destinationlabel">
      <x>817</x>
@@ -584,5 +633,6 @@
   <slot>algo_classi()</slot>
   <slot>algo_reg()</slot>
   <slot>method_apply()</slot>
+  <slot>kfold_apply()</slot>
  </slots>
 </ui>
