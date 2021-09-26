@@ -1,207 +1,187 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>SubWindow</class>
- <widget class="QMainWindow" name="SubWindow">
+ <class>Form</class>
+ <widget class="QWidget" name="Form">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>821</width>
-    <height>600</height>
+    <width>894</width>
+    <height>549</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>Form</string>
   </property>
-  <widget class="QWidget" name="centralwidget">
-   <widget class="QLabel" name="label">
+  <widget class="QGroupBox" name="groupBox">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>80</y>
+     <width>105</width>
+     <height>84</height>
+    </rect>
+   </property>
+   <property name="title">
+    <string>Splitter</string>
+   </property>
+   <layout class="QVBoxLayout" name="verticalLayout">
+    <item>
+     <widget class="QRadioButton" name="splitter">
+      <property name="text">
+       <string>Best</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QRadioButton" name="splitter_2">
+      <property name="text">
+       <string>Random</string>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QGroupBox" name="groupBox_2">
+   <property name="geometry">
+    <rect>
+     <x>160</x>
+     <y>30</y>
+     <width>621</width>
+     <height>421</height>
+    </rect>
+   </property>
+   <property name="title">
+    <string>Setting</string>
+   </property>
+   <widget class="QWidget" name="gridLayoutWidget">
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>10</y>
-      <width>261</width>
-      <height>16</height>
+      <y>40</y>
+      <width>597</width>
+      <height>351</height>
      </rect>
     </property>
-    <property name="text">
-     <string>Decision Tree Setting</string>
-    </property>
-   </widget>
-   <widget class="QGroupBox" name="groupBox">
-    <property name="geometry">
-     <rect>
-      <x>30</x>
-      <y>120</y>
-      <width>105</width>
-      <height>84</height>
-     </rect>
-    </property>
-    <property name="title">
-     <string>Splitter</string>
-    </property>
-    <layout class="QVBoxLayout" name="verticalLayout">
-     <item>
-      <widget class="QRadioButton" name="splitter">
+    <layout class="QGridLayout" name="gridLayout">
+     <item row="3" column="0">
+      <widget class="QSpinBox" name="min_samples_splits"/>
+     </item>
+     <item row="5" column="0">
+      <widget class="QSpinBox" name="min_samples_leaf"/>
+     </item>
+     <item row="1" column="0">
+      <widget class="QSpinBox" name="max_depth"/>
+     </item>
+     <item row="7" column="0">
+      <widget class="QDoubleSpinBox" name="min_weight"/>
+     </item>
+     <item row="0" column="1">
+      <widget class="QLabel" name="label_6">
        <property name="text">
-        <string>Best</string>
+        <string>► Seed</string>
        </property>
       </widget>
      </item>
-     <item>
-      <widget class="QRadioButton" name="splitter_2">
+     <item row="4" column="0">
+      <widget class="QLabel" name="label_4">
        <property name="text">
-        <string>Random</string>
+        <string>► Min Samples Leaf (value &gt;= 1)</string>
        </property>
       </widget>
+     </item>
+     <item row="4" column="1">
+      <widget class="QLabel" name="label_8">
+       <property name="text">
+        <string>► Min Impurity Decrease (value &gt;= 0.0)</string>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="1">
+      <widget class="QLabel" name="label_7">
+       <property name="text">
+        <string>► Max Leaf Nodes (value&gt; 1)</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="0">
+      <widget class="QLabel" name="label_2">
+       <property name="text">
+        <string>► Max Depth (value&gt;= 1)</string>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="0">
+      <widget class="QLabel" name="label_3">
+       <property name="text">
+        <string>► Min Samples Splits (value &gt;= 2)</string>
+       </property>
+      </widget>
+     </item>
+     <item row="6" column="0">
+      <widget class="QLabel" name="label_10">
+       <property name="text">
+        <string>► Min Weight Fraction Leaf (0.0 &lt;= value &lt;= 0.5)</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="1">
+      <widget class="QSpinBox" name="seed"/>
+     </item>
+     <item row="3" column="1">
+      <widget class="QSpinBox" name="max_leaf"/>
+     </item>
+     <item row="5" column="1">
+      <widget class="QDoubleSpinBox" name="min_impurity"/>
+     </item>
+     <item row="7" column="1">
+      <widget class="QSpinBox" name="max_features"/>
      </item>
     </layout>
    </widget>
-   <widget class="QGroupBox" name="groupBox_2">
+   <widget class="QLabel" name="label_5">
     <property name="geometry">
      <rect>
-      <x>160</x>
-      <y>30</y>
-      <width>631</width>
-      <height>421</height>
-     </rect>
-    </property>
-    <property name="title">
-     <string>Setting</string>
-    </property>
-    <widget class="QWidget" name="gridLayoutWidget">
-     <property name="geometry">
-      <rect>
-       <x>10</x>
-       <y>40</y>
-       <width>597</width>
-       <height>351</height>
-      </rect>
-     </property>
-     <layout class="QGridLayout" name="gridLayout">
-      <item row="3" column="0">
-       <widget class="QSpinBox" name="min_samples_splits"/>
-      </item>
-      <item row="5" column="0">
-       <widget class="QSpinBox" name="min_samples_leaf"/>
-      </item>
-      <item row="1" column="0">
-       <widget class="QSpinBox" name="max_depth"/>
-      </item>
-      <item row="7" column="0">
-       <widget class="QDoubleSpinBox" name="min_weight"/>
-      </item>
-      <item row="0" column="1">
-       <widget class="QLabel" name="label_6">
-        <property name="text">
-         <string>► Seed</string>
-        </property>
-       </widget>
-      </item>
-      <item row="4" column="0">
-       <widget class="QLabel" name="label_4">
-        <property name="text">
-         <string>► Min Samples Leaf (value &gt;= 1)</string>
-        </property>
-       </widget>
-      </item>
-      <item row="4" column="1">
-       <widget class="QLabel" name="label_8">
-        <property name="text">
-         <string>► Min Impurity Decrease (value &gt;= 0.0)</string>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="1">
-       <widget class="QLabel" name="label_7">
-        <property name="text">
-         <string>► Max Leaf Nodes (value&gt; 1)</string>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="0">
-       <widget class="QLabel" name="label_2">
-        <property name="text">
-         <string>► Max Depth (value&gt;= 1)</string>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="0">
-       <widget class="QLabel" name="label_3">
-        <property name="text">
-         <string>► Min Samples Splits (value &gt;= 2)</string>
-        </property>
-       </widget>
-      </item>
-      <item row="6" column="0">
-       <widget class="QLabel" name="label_10">
-        <property name="text">
-         <string>► Min Weight Fraction Leaf (0.0 &lt;= value &lt;= 0.5)</string>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="1">
-       <widget class="QSpinBox" name="seed"/>
-      </item>
-      <item row="3" column="1">
-       <widget class="QSpinBox" name="max_leaf"/>
-      </item>
-      <item row="5" column="1">
-       <widget class="QDoubleSpinBox" name="min_impurity"/>
-      </item>
-      <item row="6" column="1">
-       <widget class="QLabel" name="label_5">
-        <property name="text">
-         <string>► Max Features (value&gt;= 1)</string>
-        </property>
-       </widget>
-      </item>
-      <item row="7" column="1">
-       <widget class="QSpinBox" name="max_features"/>
-      </item>
-     </layout>
-    </widget>
-   </widget>
-   <widget class="QPushButton" name="dt">
-    <property name="geometry">
-     <rect>
-      <x>420</x>
-      <y>490</y>
-      <width>93</width>
-      <height>28</height>
+      <x>350</x>
+      <y>310</y>
+      <width>260</width>
+      <height>54</height>
      </rect>
     </property>
     <property name="text">
-     <string>Apply</string>
+     <string>► Max Features (value&gt;= 1)</string>
     </property>
    </widget>
   </widget>
-  <widget class="QMenuBar" name="menubar">
+  <widget class="QPushButton" name="dt">
    <property name="geometry">
     <rect>
-     <x>0</x>
-     <y>0</y>
-     <width>821</width>
-     <height>26</height>
+     <x>410</x>
+     <y>500</y>
+     <width>93</width>
+     <height>28</height>
     </rect>
    </property>
+   <property name="text">
+    <string>Apply</string>
+   </property>
   </widget>
-  <widget class="QStatusBar" name="statusbar"/>
  </widget>
  <resources/>
  <connections>
   <connection>
    <sender>dt</sender>
    <signal>clicked()</signal>
-   <receiver>SubWindow</receiver>
+   <receiver>Form</receiver>
    <slot>dt_apply()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>476</x>
-     <y>529</y>
+     <x>461</x>
+     <y>503</y>
     </hint>
     <hint type="destinationlabel">
-     <x>507</x>
-     <y>-5</y>
+     <x>471</x>
+     <y>-8</y>
     </hint>
    </hints>
   </connection>
