@@ -106,6 +106,13 @@ class MainWindow(QMainWindow, form_class):
 
             self.canvas.draw()
 
+            # 데이터 표준화(StandardScaler)
+            # Standardization 평균 0 / 분산 1
+            scaler = StandardScaler()
+            scaler.fit(X_train)
+            X_train = scaler.transform(X_train)
+            X_test = scaler.transform(X_test)
+
 
     def list_click(self):   # 속성들을 클릭하면
         curr_data = self.list.currentItem().text()
@@ -174,6 +181,15 @@ class MainWindow(QMainWindow, form_class):
         for i in range(column_length):
             self.miss.setItem(i, 1, QTableWidgetItem(str(df.isnull().sum()[i])))
 
+        # 박스플롯 다시그리기
+        self.fig.clear()
+
+        ax = self.fig.add_subplot(111)
+        ax.boxplot(X)
+        ax.set_xticklabels(X)
+
+        self.canvas.draw()
+
     def on_select(self):    #종속변수 정하기
         result = self.comboBox.currentText()
         global X,y,X_train,X_test,y_train,y_test
@@ -210,13 +226,6 @@ class MainWindow(QMainWindow, form_class):
         count = -1
 
         k = int(self.k_fold.currentText()) if self.k_fold.currentText() is not "" else 0   # kfold
-
-        # 데이터 표준화(StandardScaler)
-        # Standardization 평균 0 / 분산 1
-        scaler = StandardScaler()
-        scaler.fit(X_train)
-        X_train = scaler.transform(X_train)
-        X_test = scaler.transform(X_test)
 
         if k is not 0:  # 교차검증할 k가 0이 아닐때
             if self.knn.isChecked() == True: # Knn 알고리즘
@@ -388,17 +397,28 @@ class MainWindow(QMainWindow, form_class):
 
             if self.tree.isChecked() == True:  # Decision Tree 알고리즘
                 count += 1
+                self.second = SubWindow()
+                self.second.showModal()
+                params = self.second.p
 
-                dt = DecisionTreeClassifier(max_depth=5, random_state=42)
+                dt = DecisionTreeClassifier(splitter=params['splitter'], max_depth=params['max_depth'], min_samples_split=params['min_samples_splits'],
+                                    min_samples_leaf=params['min_samples_leaf'], min_weight_fraction_leaf=params['min_weight'],
+                                    max_features=params['max_features'], max_leaf_nodes=params['max_leaf'], min_impurity_decrease=params['min_impurity'],
+                                    random_state=params['seed'])
                 dt.fit(x_train, y_train)  # 표준화 하지 않은 데이터
-                y_predict = dt.predict(x_test)
-                self.result.setItem(count, 0, QTableWidgetItem("DecisionTree"))
-                self.result.setItem(count, 2, QTableWidgetItem(str(round(accuracy_score(y_test, y_predict), 5))))
-                self.result.setItem(count, 3, QTableWidgetItem(
-                    str(round(precision_score(y_test, y_predict, average='weighted'), 5))))
-                self.result.setItem(count, 4, QTableWidgetItem(
-                    str(round(recall_score(y_test, y_predict, average='weighted'), 5))))
+                y_pred = dt.predict(x_test)
 
+                self.result.setItem(count, 0, QTableWidgetItem("DecisionTree"))
+                self.result.setItem(count, 1, QTableWidgetItem(str(params)))
+                self.result.setItem(count, 2, QTableWidgetItem(str(round(accuracy_score(y_test, y_pred), 5))))
+                self.result.setItem(count, 3, QTableWidgetItem(
+                    str(round(precision_score(y_test, y_pred, average='weighted'), 5))))
+                self.result.setItem(count, 4,
+                                    QTableWidgetItem(str(round(recall_score(y_test, y_pred, average='weighted'), 5))))
+                self.result.setItem(count + 1, 3, QTableWidgetItem(
+                    "RMSE: " + str(round(mean_squared_error(y_test, y_pred) ** 0.5, 5))))
+                self.result.setItem(count + 1, 4,
+                                    QTableWidgetItem("MSE: " + str(round(mean_squared_error(y_test, y_pred), 5))))
 
         self.result.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeToContents)
 
@@ -410,6 +430,7 @@ class SubWindow(QDialog, dt_class):     # Decision Tree Setting
         self.splitter.setChecked(True)  # splitter 기본으로 best
 
         self.params = None
+        self.p =None
 
     def dt_apply(self):
         splitter = "best" if self.splitter.isChecked else "random"
@@ -441,6 +462,7 @@ class SubWindow(QDialog, dt_class):     # Decision Tree Setting
                                     'random_state':[p['seed']]}
 
         self.params = params
+        self.p = p
         self.close()
 
     def showModal(self):
