@@ -21,7 +21,7 @@
        <bool>false</bool>
       </property>
       <property name="currentIndex">
-       <number>2</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="Preview">
        <attribute name="title">
@@ -334,9 +334,9 @@
         </widget>
        </widget>
       </widget>
-      <widget class="QWidget" name="Classify">
+      <widget class="QWidget" name="Evaluation">
        <attribute name="title">
-        <string>Classify</string>
+        <string>Evaluation</string>
        </attribute>
        <widget class="QGroupBox" name="groupBox">
         <property name="geometry">

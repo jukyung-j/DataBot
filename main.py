@@ -97,8 +97,8 @@ class MainWindow(QMainWindow, form_class):
             self.method.addItem("most_frequent")
 
             # Box graph
-            self.box_graph.addWidget(self.canvas)
             self.fig.clear()
+            self.box_graph.addWidget(self.canvas)
 
             ax = self.fig.add_subplot(111)
             ax.boxplot(X)
