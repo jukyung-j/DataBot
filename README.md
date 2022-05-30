@@ -39,7 +39,7 @@
  ### PreProcess 단계
  
  
- <img width="50" src="https://user-images.githubusercontent.com/68947314/170917757-03e3a28a-1be0-4f12-bf51-d06a300702de.png" />
+ <img width="50%" src="https://user-images.githubusercontent.com/68947314/170917757-03e3a28a-1be0-4f12-bf51-d06a300702de.png" />
  
  
  다음 단계인 데이터 전처리를 위해 Preprocessing탭을 누르면 그림3과 같이 나타난다. 먼저 속성에 결측치가 있으면 결측치의 개수를 보여준다. 결측치가 있으면 제대로 된 학습을 할 수 없기에 이를 처리할 필요가 있다. 본 데이터로봇에서는 delete, mean, median, most_frequent 등의 결측치 처리 방법을 사용한다.
